@@ -19,10 +19,60 @@
       </span>
     </template>
 
+    <template #cell-PersonalInfo="{ item }">
+      <div class="flex flex-col gap-1">
+        <span class="text-text-primary text-sm font-medium">
+          {{ item.Qualification || 'بدون مؤهل' }}
+        </span>
+        <span v-if="item.BirthDate" class="text-text-muted text-xs flex items-center gap-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-3 w-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          {{ item.BirthDate }}
+        </span>
+      </div>
+    </template>
+
     <template #cell-NationalNo="{ item }">
       <span class="font-mono text-text-secondary text-sm">
         {{ item.NationalNo || 'غير متوفر' }}
       </span>
+    </template>
+
+    <template #cell-PassportInfo="{ item }">
+      <div class="flex flex-col gap-1">
+        <span class="font-mono text-text-primary text-sm">
+          {{ item.PassportNo || 'لا يوجد جواز' }}
+        </span>
+        <span v-if="item.PassportExpiry" class="text-text-muted text-xs flex items-center gap-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-3 w-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          {{ item.PassportExpiry }}
+        </span>
+      </div>
     </template>
 
     <template #cell-Phone="{ item }">
@@ -58,6 +108,15 @@
       >
         {{ item.IsFit ? 'لائق' : 'غير لائق' }}
       </span>
+    </template>
+
+    <template #cell-Notes="{ item }">
+      <div
+        class="max-w-[120px] truncate text-text-secondary text-xs cursor-help"
+        :title="item.Notes"
+      >
+        {{ item.Notes || '---' }}
+      </div>
     </template>
 
     <template #cell-actions="{ item }">
@@ -124,15 +183,18 @@ defineProps({
 
 defineEmits(['edit', 'delete', 'row-click'])
 
-// أعمدة الجدول المخصصة للمترشحين بناءً على الحقول التي أنشأناها
+// تم تعديل مصفوفة الأعمدة لتعكس الحقول الجديدة المدمجة
 const headers = ref([
   { key: 'SequenceNo', label: 'التسلسل' },
   { key: 'Name', label: 'الاسم رباعي' },
+  { key: 'PersonalInfo', label: 'بيانات شخصية' }, // تم دمج المؤهل وتاريخ الميلاد هنا
   { key: 'NationalNo', label: 'الرقم الوطني' },
+  { key: 'PassportInfo', label: 'بيانات الجواز' }, // تم دمج رقم الجواز وتاريخ الانتهاء هنا
   { key: 'Phone', label: 'رقم الهاتف' },
   { key: 'Residence', label: 'السكن' },
   { key: 'Size', label: 'المقاس' },
   { key: 'IsFit', label: 'حالة اللياقة' },
+  { key: 'Notes', label: 'ملاحظات' }, // تمت إضافة الملاحظات
   { key: 'actions', label: 'الإجراءات', class: 'text-left' },
 ])
 </script>
