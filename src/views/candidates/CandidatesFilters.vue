@@ -1,9 +1,6 @@
 <template>
   <div class="bg-surface-ground border border-surface-border p-4 rounded-xl mb-6">
-    <form
-      @submit.prevent="applyFilters"
-      class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 items-end"
-    >
+    <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 items-end">
       <div class="lg:col-span-2">
         <AppInput
           v-model="filters.search"
@@ -51,35 +48,26 @@
         </select>
       </div>
 
-      <div
-        class="md:col-span-4 lg:col-span-5 flex justify-end gap-3 mt-2 border-t border-surface-border pt-4"
-      >
-        <AppButton type="button" variant="secondary" @click="resetFilters" :disabled="loading">
-          مسح الفلاتر
+      <div class="md:col-span-4 lg:col-span-5 flex justify-end mt-2">
+        <AppButton type="button" variant="secondary" @click="resetFilters" size="sm">
+          مسح كل الفلاتر
         </AppButton>
-
-        <AppButton type="submit" variant="primary" :loading="loading"> تطبيق الفلاتر </AppButton>
       </div>
-    </form>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 
-defineProps({
-  loading: {
-    type: Boolean,
-    default: false,
-  },
+const props = defineProps({
+  loading: { type: Boolean, default: false },
 })
 
-// إرسال الأحداث للشاشة الأب (الشاشة الرئيسية)
 const emit = defineEmits(['filter'])
 
-// حالة الفلاتر المحلية
 const filters = ref({
   search: '',
   Residence: '',
@@ -87,11 +75,12 @@ const filters = ref({
   IsFit: '',
 })
 
-// تطبيق الفلاتر وإرسالها
-const applyFilters = () => {
-  // نقوم بإنشاء كائن جديد لكي لا نرسل خصائص فارغة وتسبب زحمة في الـ API
-  const activeFilters = {}
+// متغير لحفظ "مؤقت" التأخير (Debounce)
+let debounceTimeout = null
 
+// دالة تجميع الفلاتر النشطة وإرسالها
+const emitFilters = () => {
+  const activeFilters = {}
   if (filters.value.search) activeFilters.search = filters.value.search
   if (filters.value.Residence) activeFilters.Residence = filters.value.Residence
   if (filters.value.Size) activeFilters.Size = filters.value.Size
@@ -100,7 +89,21 @@ const applyFilters = () => {
   emit('filter', activeFilters)
 }
 
-// تصفير الفلاتر وإعادة التحميل
+// ⚠️ مراقبة التغييرات في الفلاتر بشكل آلي
+watch(
+  filters,
+  (newVal, oldVal) => {
+    // تنظيف المؤقت السابق إذا بدأ المستخدم بالكتابة من جديد
+    clearTimeout(debounceTimeout)
+
+    // تطبيق الـ Debounce: ننتظر 500 ملي ثانية بعد توقف المستخدم عن الكتابة قبل إرسال الطلب
+    debounceTimeout = setTimeout(() => {
+      emitFilters()
+    }, 500)
+  },
+  { deep: true }, // ضروري لمراقبة التغييرات داخل الكائن
+)
+
 const resetFilters = () => {
   filters.value = {
     search: '',
@@ -108,6 +111,6 @@ const resetFilters = () => {
     Size: '',
     IsFit: '',
   }
-  emit('filter', {}) // إرسال كائن فارغ لجلب كل البيانات من جديد
+  // لا نحتاج لاستدعاء emitFilters هنا لأن الـ watch سيلتقط التغيير تلقائياً
 }
 </script>
