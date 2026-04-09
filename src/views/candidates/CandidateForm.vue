@@ -215,7 +215,8 @@ const handleImageChange = (event) => {
     imagePreview.value = URL.createObjectURL(file)
   } else {
     form.value.image = null
-    imagePreview.value = props.initialData?.Image?.FileUrl || null
+    // ✅ التعديل هنا: استخدام image_url
+    imagePreview.value = props.initialData?.image_url || null
   }
 }
 
@@ -267,10 +268,10 @@ watch(
         Size: newData.Size || '',
         IsFit: newData.IsFit ?? true,
         Notes: newData.Notes || '',
-        image: null, // نبقيه فارغاً ما لم يرفع صورة جديدة
+        image: null,
       }
-      // جلب رابط الصورة إذا كان المترشح يملك صورة مسبقاً
-      imagePreview.value = newData.Image?.FileUrl || null
+      // ✅ التعديل هنا: استخدام image_url القادم من الباك إند
+      imagePreview.value = newData.image_url || null
     } else {
       resetForm()
     }
