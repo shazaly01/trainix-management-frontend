@@ -3,7 +3,7 @@
     class="bg-[#0f172a] rounded-[1.5rem] shadow-2xl border border-slate-800/50 overflow-hidden font-sans"
   >
     <AppTable
-      :headers="headers"
+      :headers="filteredHeaders"
       :items="items"
       :isLoading="isLoading"
       @row-click="$emit('row-click', $event)"
@@ -50,7 +50,7 @@
         <div class="flex flex-col items-start gap-3 py-1">
           <div class="flex items-center gap-3">
             <div
-              class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] font-black text-slate-500 shrink-0"
+              class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] font-black text-slate-500 shrink-0 uppercase"
             >
               ID
             </div>
@@ -138,7 +138,6 @@
           >
             {{ item.IsFit ? 'لائق طبياً' : 'غير لائق' }}
           </span>
-
           <span
             class="px-2.5 py-0.5 text-[10px] font-black rounded-lg border w-fit uppercase"
             :class="
@@ -149,7 +148,6 @@
           >
             {{ item.TrainingType === 'external' ? 'تدريب خارجي' : 'تدريب داخلي' }}
           </span>
-
           <div
             v-if="item.Size"
             class="text-[9px] font-black text-slate-400 bg-slate-800 px-2 py-0.5 border border-slate-700 rounded-lg w-fit"
@@ -168,8 +166,10 @@
       <template #cell-actions="{ item }">
         <div class="flex items-center gap-2">
           <button
+            v-if="auth.can('candidate.update')"
             @click.stop="$emit('edit', item)"
             class="w-9 h-9 bg-slate-800 text-sky-400 rounded-xl hover:bg-sky-500 hover:text-white transition-all flex items-center justify-center border border-slate-700/50 shadow-lg"
+            title="تعديل المترشح"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -178,9 +178,12 @@
               />
             </svg>
           </button>
+
           <button
+            v-if="auth.can('candidate.delete')"
             @click.stop="$emit('delete', item.id)"
             class="w-9 h-9 bg-slate-800 text-rose-400 rounded-xl hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center border border-slate-700/50 shadow-lg"
+            title="حذف المترشح"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -196,15 +199,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 import AppTable from '@/components/ui/AppTable.vue'
+import { useAuthStore } from '@/stores/authStore' // 👈 استيراد ستور الصلاحيات
 
-defineProps({
+const props = defineProps({
   items: { type: Array, required: true },
   isLoading: { type: Boolean, default: false },
 })
 
 defineEmits(['edit', 'delete', 'row-click'])
+
+const auth = useAuthStore() // 👈 تهيئة الستور
 
 const calculateAge = (birthDate) => {
   if (!birthDate) return '--'
@@ -216,15 +222,24 @@ const calculateAge = (birthDate) => {
   return age
 }
 
-const headers = ref([
-  { key: 'Identity', label: 'المترشح' },
-  { key: 'Personal', label: 'المؤهل والعمر' },
-  { key: 'Docs', label: 'الوثائق الثبوتية' },
-  { key: 'ContactLocation', label: 'الاتصال والسكن' },
-  { key: 'StatusTypeSize', label: 'الحالة والنوع' },
-  { key: 'Notes', label: 'ملاحظات' },
-  { key: 'actions', label: '', class: 'w-24' },
-])
+// 🌟 تصفية الهيدرز: إخفاء عمود الإجراءات إذا لم تكن هناك صلاحيات
+const filteredHeaders = computed(() => {
+  const baseHeaders = [
+    { key: 'Identity', label: 'المترشح' },
+    { key: 'Personal', label: 'المؤهل والعمر' },
+    { key: 'Docs', label: 'الوثائق الثبوتية' },
+    { key: 'ContactLocation', label: 'الاتصال والسكن' },
+    { key: 'StatusTypeSize', label: 'الحالة والنوع' },
+    { key: 'Notes', label: 'ملاحظات' },
+  ]
+
+  // إذا كان المستخدم يملك صلاحية التعديل أو الحذف (أو هو Super Admin)
+  if (auth.can('candidate.update') || auth.can('candidate.delete')) {
+    baseHeaders.push({ key: 'actions', label: '', class: 'w-24' })
+  }
+
+  return baseHeaders
+})
 </script>
 
 <style scoped>
