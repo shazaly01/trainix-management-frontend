@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative min-h-[600px] flex flex-col bg-slate-300 rounded-[3rem] shadow-2xl border border-slate-400 overflow-hidden p-8 md:p-12 animate-in slide-in-from-bottom-4 duration-500"
+    class="relative w-full max-w-5xl mx-auto min-h-[600px] flex flex-col bg-slate-300 rounded-[1.5rem] md:rounded-[3rem] shadow-2xl border border-slate-400 overflow-hidden p-4 md:p-12 animate-in slide-in-from-bottom-4 duration-500"
   >
     <div
       class="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-0 pointer-events-none opacity-40"
@@ -219,21 +219,27 @@
             <label class="public-label"
               >مقاس الزي الموحد (Uniform Size) <span class="text-red-500">*</span></label
             >
-            <div class="flex flex-wrap gap-4">
-              <button
-                v-for="s in ['S', 'M', 'L', 'XL', '2XL', '3XL']"
-                :key="s"
-                type="button"
-                @click="form.Size = s"
-                :class="
-                  form.Size === s
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-300 border-blue-600 scale-105'
-                    : 'bg-white text-slate-600 border-slate-200 hover:border-blue-400 hover:text-blue-600'
-                "
-                class="w-16 h-14 rounded-xl font-black transition-all border-2 flex items-center justify-center text-lg"
+            <div class="space-y-3 md:col-span-2">
+              <label class="public-label"
+                >مقاس الزي الموحد (Uniform Size) <span class="text-red-500">*</span></label
               >
-                {{ s }}
-              </button>
+
+              <div class="flex flex-wrap gap-2 md:gap-4 justify-center md:justify-start">
+                <button
+                  v-for="s in ['S', 'M', 'L', 'XL', '2XL', '3XL']"
+                  :key="s"
+                  type="button"
+                  @click="form.Size = s"
+                  :class="
+                    form.Size === s
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-300 border-blue-600 scale-105'
+                      : 'bg-white text-slate-600 border-slate-200 hover:border-blue-400 hover:text-blue-600'
+                  "
+                  class="w-16 h-14 rounded-xl font-black transition-all border-2 flex items-center justify-center text-lg"
+                >
+                  {{ s }}
+                </button>
+              </div>
             </div>
           </div>
 

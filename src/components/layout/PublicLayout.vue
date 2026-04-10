@@ -1,3 +1,4 @@
+<!--src\components\layout\PublicLayout.vue-->
 <template>
   <div class="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-800 font-sans" dir="rtl">
     <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
