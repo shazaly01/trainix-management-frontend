@@ -52,7 +52,7 @@
         required
       />
 
-      <div class="flex flex-col">
+      <!-- <div class="flex flex-col">
         <label class="text-sm font-bold text-text-primary mb-1">الدورة التدريبية (اختياري)</label>
         <select
           v-model="form.job_request_id"
@@ -62,6 +62,17 @@
           <option v-for="job in jobRequests" :key="job.id" :value="job.id">
             {{ job.RequiredMajor }} - {{ job.RequestNo }}
           </option>
+        </select>
+      </div> -->
+
+      <div class="flex flex-col">
+        <label class="text-sm font-bold text-text-primary mb-1">نوع التدريب</label>
+        <select
+          v-model="form.TrainingType"
+          class="w-full rounded-lg border-surface-border bg-surface-section text-text-primary focus:ring-primary h-[42px] px-3 border"
+        >
+          <option value="internal">تدريب داخلي</option>
+          <option value="external">تدريب خارجي</option>
         </select>
       </div>
     </div>
@@ -184,6 +195,7 @@ const jobRequestStore = useJobRequestStore()
 // 2. تعريف الحالة (State)
 const form = ref({
   job_request_id: null, // الحقل الجديد
+  TrainingType: 'internal',
   Name: '',
   BirthDate: '',
   Qualification: '',
@@ -228,6 +240,7 @@ const currentAge = computed(() => {
 const resetForm = () => {
   form.value = {
     job_request_id: null,
+    TrainingType: 'internal',
     Name: '',
     BirthDate: '',
     Qualification: '',
@@ -261,6 +274,7 @@ const handleSubmit = () => {
 
   // إضافة الحقول الأساسية للـ FormData
   formData.append('Name', form.value.Name)
+  formData.append('TrainingType', form.value.TrainingType)
   formData.append('NationalNo', form.value.NationalNo || '')
   formData.append('Phone', form.value.Phone || '')
   formData.append('Residence', form.value.Residence || '')
@@ -289,6 +303,7 @@ watch(
     if (newData) {
       form.value = {
         job_request_id: newData.job_request_id || null, // تعبئة رقم الدورة عند التعديل
+        TrainingType: newData.TrainingType || 'internal',
         Name: newData.Name || '',
         BirthDate: newData.BirthDate || '',
         Qualification: newData.Qualification || '',

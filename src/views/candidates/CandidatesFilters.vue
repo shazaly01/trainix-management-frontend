@@ -1,12 +1,12 @@
 <template>
   <div class="bg-surface-ground border border-surface-border p-4 rounded-xl mb-6">
-    <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 items-end">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
       <div class="lg:col-span-2">
         <AppInput
           v-model="filters.search"
           id="search"
           label="بحث"
-          placeholder="ابحث بالاسم، الرقم الوطني، الهاتف..."
+          placeholder="ابحث بالاسم، الرقم الوطني..."
         />
       </div>
 
@@ -48,7 +48,19 @@
         </select>
       </div>
 
-      <div class="md:col-span-4 lg:col-span-5 flex justify-end mt-2">
+      <div>
+        <label class="block text-sm font-medium text-text-primary mb-1.5">نوع التدريب</label>
+        <select
+          v-model="filters.TrainingType"
+          class="w-full bg-white dark:bg-surface-ground border border-surface-border text-text-primary text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 outline-none transition-colors font-bold"
+        >
+          <option value="">الكل</option>
+          <option value="internal" class="text-blue-500">تدريب داخلي</option>
+          <option value="external" class="text-purple-500">تدريب خارجي</option>
+        </select>
+      </div>
+
+      <div class="md:col-span-3 lg:col-span-6 flex justify-end mt-2">
         <AppButton type="button" variant="secondary" @click="resetFilters" size="sm">
           مسح كل الفلاتر
         </AppButton>
@@ -73,35 +85,31 @@ const filters = ref({
   Residence: '',
   Size: '',
   IsFit: '',
+  TrainingType: '', // 👈 إضافة الحقل هنا
 })
 
-// متغير لحفظ "مؤقت" التأخير (Debounce)
 let debounceTimeout = null
 
-// دالة تجميع الفلاتر النشطة وإرسالها
 const emitFilters = () => {
   const activeFilters = {}
   if (filters.value.search) activeFilters.search = filters.value.search
   if (filters.value.Residence) activeFilters.Residence = filters.value.Residence
   if (filters.value.Size) activeFilters.Size = filters.value.Size
   if (filters.value.IsFit !== '') activeFilters.IsFit = filters.value.IsFit
+  if (filters.value.TrainingType) activeFilters.TrainingType = filters.value.TrainingType // 👈 إرساله للباك إند
 
   emit('filter', activeFilters)
 }
 
-// ⚠️ مراقبة التغييرات في الفلاتر بشكل آلي
 watch(
   filters,
-  (newVal, oldVal) => {
-    // تنظيف المؤقت السابق إذا بدأ المستخدم بالكتابة من جديد
+  () => {
     clearTimeout(debounceTimeout)
-
-    // تطبيق الـ Debounce: ننتظر 500 ملي ثانية بعد توقف المستخدم عن الكتابة قبل إرسال الطلب
     debounceTimeout = setTimeout(() => {
       emitFilters()
     }, 500)
   },
-  { deep: true }, // ضروري لمراقبة التغييرات داخل الكائن
+  { deep: true },
 )
 
 const resetFilters = () => {
@@ -110,7 +118,7 @@ const resetFilters = () => {
     Residence: '',
     Size: '',
     IsFit: '',
+    TrainingType: '', // 👈 إعادة التعيين
   }
-  // لا نحتاج لاستدعاء emitFilters هنا لأن الـ watch سيلتقط التغيير تلقائياً
 }
 </script>
