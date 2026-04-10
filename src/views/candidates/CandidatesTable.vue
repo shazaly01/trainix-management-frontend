@@ -80,6 +80,44 @@
         </div>
       </template>
 
+      <template #cell-BankDetails="{ item }">
+        <div class="flex flex-col items-start gap-2.5 py-1">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0"
+            >
+              <svg
+                class="w-4 h-4 text-amber-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M3 21h18M3 10h18M5 10V7a2 2 0 012-2h10a2 2 0 012 2v3M7 21v-11m10 11v-11M12 21v-11"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <span class="text-white font-bold text-xs truncate max-w-[120px]">{{
+              item.BankName || '---'
+            }}</span>
+          </div>
+          <div v-if="item.BankAccountNo" class="flex items-center gap-3">
+            <div
+              class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-[9px] font-black text-slate-500 shrink-0 uppercase"
+            >
+              ACC
+            </div>
+            <span class="font-mono text-sm font-black text-amber-300/90 tracking-widest">{{
+              item.BankAccountNo
+            }}</span>
+          </div>
+          <span v-else class="text-slate-600 text-[10px] mr-10 italic">لا يوجد حساب</span>
+        </div>
+      </template>
+
       <template #cell-ContactLocation="{ item }">
         <div class="flex flex-col items-start gap-3 py-1">
           <div class="flex items-center gap-3">
@@ -228,6 +266,7 @@ const filteredHeaders = computed(() => {
     { key: 'Identity', label: 'المترشح' },
     { key: 'Personal', label: 'المؤهل والعمر' },
     { key: 'Docs', label: 'الوثائق الثبوتية' },
+    { key: 'BankDetails', label: 'البيانات المالية' },
     { key: 'ContactLocation', label: 'الاتصال والسكن' },
     { key: 'StatusTypeSize', label: 'الحالة والنوع' },
     { key: 'Notes', label: 'ملاحظات' },

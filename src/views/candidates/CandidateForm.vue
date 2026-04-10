@@ -134,6 +134,21 @@
       <AppInput v-model="form.Size" id="size" label="المقاس (الزي)" placeholder="مثال: XL, 42" />
     </div>
 
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <AppInput
+        v-model="form.BankName"
+        id="bank_name"
+        label="اسم المصرف"
+        placeholder="مثال: مصرف الوحدة"
+      />
+      <AppInput
+        v-model="form.BankAccountNo"
+        id="bank_account_no"
+        label="رقم الحساب"
+        placeholder="أدخل رقم الحساب الجاري..."
+      />
+    </div>
+
     <div class="flex items-center gap-2">
       <input
         v-model="form.IsFit"
@@ -207,6 +222,8 @@ const form = ref({
   Size: '',
   IsFit: true,
   Notes: '',
+  BankName: '', // 👈 أضف هذا
+  BankAccountNo: '', // 👈 أضف هذا
   image: null,
 })
 
@@ -252,6 +269,8 @@ const resetForm = () => {
     Size: '',
     IsFit: true,
     Notes: '',
+    BankName: '',
+    BankAccountNo: '',
     image: null,
   }
   imagePreview.value = null
@@ -282,7 +301,8 @@ const handleSubmit = () => {
   formData.append('Qualification', form.value.Qualification || '')
   formData.append('Notes', form.value.Notes || '')
   formData.append('IsFit', form.value.IsFit ? '1' : '0')
-
+  formData.append('BankName', form.value.BankName || '')
+  formData.append('BankAccountNo', form.value.BankAccountNo || '')
   // إضافة الحقول الجديدة والاختيارية
   if (form.value.job_request_id) formData.append('job_request_id', form.value.job_request_id)
   if (form.value.BirthDate) formData.append('BirthDate', form.value.BirthDate)
@@ -315,6 +335,8 @@ watch(
         Size: newData.Size || '',
         IsFit: newData.IsFit ?? true,
         Notes: newData.Notes || '',
+        BankName: newData.BankName || '', // 👈 جلب البيانات عند التعديل
+        BankAccountNo: newData.BankAccountNo || '', // 👈 جلب البيانات عند التعديل
         image: null,
       }
       imagePreview.value = newData.image_url || null
