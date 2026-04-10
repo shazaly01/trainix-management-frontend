@@ -1,3 +1,4 @@
+<!--src\views\external-application\steps\ResumeApplicationModal.vue-->
 <template>
   <div
     v-if="isOpen"

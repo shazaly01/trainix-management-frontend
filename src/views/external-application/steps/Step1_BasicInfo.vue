@@ -1,3 +1,4 @@
+<!--src\views\external-application\steps\Step1_BasicInfo.vue-->
 <template>
   <div class="animate-fade-in space-y-10">
     <div

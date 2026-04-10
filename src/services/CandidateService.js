@@ -48,4 +48,19 @@ export default {
   delete(id) {
     return apiClient.delete(`${resource}/${id}`)
   },
+
+  submitPublic(payload) {
+    // إرسال طلب جديد
+    return apiClient.post('/public/candidates/submit', payload)
+  },
+
+  verifyPublic(payload) {
+    // التحقق من هوية المتدرب لاسترجاع بياناته
+    return apiClient.post('/public/candidates/verify', payload)
+  },
+
+  updatePublic(payload) {
+    // تحديث الطلب (الباك إند هنا مجهز لاستقبال POST لتسهيل التعامل مع الـ FormData والصور)
+    return apiClient.post('/public/candidates/update', payload)
+  },
 }

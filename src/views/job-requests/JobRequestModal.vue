@@ -1,13 +1,12 @@
-<!--src\views\job-requests\JobRequestModal.vue-->
 <template>
   <AppDialog
     :model-value="isOpen"
-    :title="isEditing ? 'تعديل طلب توظيف' : 'إضافة طلب توظيف جديد'"
+    :title="isEditing ? 'تعديل الدورة التدريبية' : 'إضافة دورة تدريبية جديدة'"
     @update:model-value="closeModal"
   >
     <div
       v-if="jobRequestStore.error"
-      class="mb-4 p-3 rounded-lg bg-danger/10 text-danger text-sm border border-danger/20"
+      class="mb-4 p-3 rounded-lg bg-red-50 text-red-600 text-sm border border-red-200 font-bold"
     >
       {{ jobRequestStore.error }}
     </div>
@@ -67,7 +66,7 @@ const handleSave = async (formData) => {
       closeModal()
     }
   } catch (error) {
-    console.error(error)
+    console.error('حدث خطأ أثناء حفظ الدورة:', error)
   }
 }
 </script>

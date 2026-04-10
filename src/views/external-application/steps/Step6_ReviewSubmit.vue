@@ -1,3 +1,4 @@
+<!--src\views\external-application\steps\Step6_ReviewSubmit.vue-->
 <template>
   <div class="animate-fade-in">
     <div v-if="!isSubmitted">

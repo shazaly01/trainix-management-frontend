@@ -1,3 +1,4 @@
+<!--src\views\candidates\CandidateModal.vue-->
 <template>
   <AppDialog
     :model-value="isOpen"

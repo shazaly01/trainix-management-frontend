@@ -14,16 +14,16 @@
     </template>
 
     <template #cell-Department="{ item }">
-      <span class="text-text-primary">
-        {{ item.Department?.Name || 'غير محدد' }}
+      <span class="text-text-primary font-medium">
+        {{ item.Department?.Name || 'الإدارة العامة' }}
       </span>
     </template>
 
     <template #cell-ApplicationsCount="{ item }">
       <span
-        class="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-1 rounded-full text-xs font-bold"
+        class="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-3 py-1 rounded-full text-xs font-bold"
       >
-        {{ item.ApplicationsCount || 0 }}
+        {{ item.ApplicationsCount || 0 }} متدرب
       </span>
     </template>
 
@@ -31,8 +31,8 @@
       <button
         v-if="item.ApplyLink"
         @click.stop="copyToClipboard(item.ApplyLink)"
-        class="flex items-center gap-1 text-xs font-medium text-primary hover:text-primary-dark transition-colors bg-primary/5 px-2 py-1 rounded border border-primary/20"
-        title="نسخ رابط التقديم المباشر"
+        class="flex items-center gap-1 text-xs font-bold text-primary hover:text-primary-dark transition-colors bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/20"
+        title="نسخ رابط التسجيل للدورة"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -55,7 +55,7 @@
 
     <template #cell-Status="{ item }">
       <span
-        class="px-3 py-1 text-xs rounded-full font-medium border"
+        class="px-3 py-1 text-xs rounded-full font-bold border"
         :class="getStatusClass(item.Status)"
       >
         {{ item.Status || 'مفتوح' }}
@@ -66,8 +66,8 @@
       <div class="flex items-center gap-3">
         <button
           @click.stop="$emit('edit', item)"
-          class="text-blue-500 hover:text-blue-700 transition-colors"
-          title="تعديل الطلب"
+          class="text-blue-500 hover:text-blue-700 transition-colors p-1 rounded hover:bg-blue-50"
+          title="تعديل بيانات الدورة"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -86,8 +86,8 @@
         </button>
         <button
           @click.stop="$emit('delete', item.id)"
-          class="text-red-500 hover:text-red-700 transition-colors"
-          title="حذف الطلب"
+          class="text-red-500 hover:text-red-700 transition-colors p-1 rounded hover:bg-red-50"
+          title="حذف الدورة"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -126,25 +126,28 @@ defineProps({
 
 defineEmits(['edit', 'delete', 'row-click'])
 
-// أعمدة الجدول المحدثة
+// تم تغيير المسميات لتتناسب مع "الدورات التدريبية"
 const headers = ref([
-  { key: 'RequestNo', label: 'رقم الطلب' },
-  { key: 'Department', label: 'الإدارة' },
-  { key: 'RequiredMajor', label: 'التخصص المطلوب' },
-  { key: 'ApplyLink', label: 'رابط التقديم' }, // ✅ العمود الجديد
-  { key: 'ApplicationsCount', label: 'المتقدمين' },
+  { key: 'RequestNo', label: 'رقم المرجع' },
+  { key: 'Department', label: 'الجهة المنظمة' },
+  { key: 'RequiredMajor', label: 'اسم الدورة التدريبية' }, // كان "التخصص المطلوب"
+  { key: 'ApplyLink', label: 'بوابة التسجيل' },
+  { key: 'ApplicationsCount', label: 'المتدربين' }, // كان "المتقدمين"
   { key: 'Status', label: 'الحالة' },
   { key: 'actions', label: 'الإجراءات', class: 'text-left' },
 ])
 
-// دالة نسخ الرابط
+// دالة نسخ الرابط (مع المعالجة الذكية للمسار الجديد)
 const copyToClipboard = (text) => {
   if (!text) return
+
+  // 🔥 التعديل هنا: نستبدل مسار التوظيف القديم بمسار التدريب الجديد
+  const fixedLink = text.replace('/apply/', '/training/')
+
   navigator.clipboard
-    .writeText(text)
+    .writeText(fixedLink)
     .then(() => {
-      // يمكنك استبدال alert بـ Toast إذا كان متوفراً لديك
-      alert('تم نسخ رابط التقديم بنجاح')
+      alert('تم نسخ رابط التسجيل المخصص لهذه الدورة بنجاح.')
     })
     .catch((err) => {
       console.error('فشل النسخ:', err)

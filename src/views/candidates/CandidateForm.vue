@@ -36,11 +36,10 @@
         <input
           type="file"
           ref="fileInput"
-          accept="image/jpeg, image/png, image/jpg"
+          accept="image/*"
           @change="handleImageChange"
           class="block w-full text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
         />
-        <p class="text-xs text-text-muted mt-1">يُسمح بصيغ JPG, PNG بحجم أقصى 5 ميجابايت.</p>
       </div>
     </div>
 
@@ -53,6 +52,21 @@
         required
       />
 
+      <div class="flex flex-col">
+        <label class="text-sm font-bold text-text-primary mb-1">الدورة التدريبية (اختياري)</label>
+        <select
+          v-model="form.job_request_id"
+          class="w-full rounded-lg border-surface-border bg-surface-section text-text-primary focus:ring-primary h-[42px] px-3 border"
+        >
+          <option :value="null">--- لا يتبع لدورة محددة ---</option>
+          <option v-for="job in jobRequests" :key="job.id" :value="job.id">
+            {{ job.RequiredMajor }} - {{ job.RequestNo }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <AppInput
         v-model="form.NationalNo"
         id="national_no"
@@ -61,11 +75,19 @@
         label="الرقم الوطني"
         placeholder="أدخل الرقم الوطني..."
       />
+
+      <div class="relative">
+        <AppInput v-model="form.BirthDate" id="birth_date" type="date" label="تاريخ الميلاد" />
+        <span
+          v-if="currentAge !== null"
+          class="absolute top-0 left-0 text-xs font-bold text-primary bg-primary/5 px-2 py-0.5 rounded"
+        >
+          العمر: {{ currentAge }} سنة
+        </span>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <AppInput v-model="form.BirthDate" id="birth_date" type="date" label="تاريخ الميلاد" />
-
       <AppInput
         v-model="form.Phone"
         id="phone"
@@ -73,6 +95,7 @@
         label="رقم الهاتف"
         placeholder="09..."
       />
+      <AppInput v-model="form.Residence" id="residence" label="السكن" placeholder="مثال: بنغازي" />
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -82,7 +105,6 @@
         label="رقم الجواز"
         placeholder="مثال: AB123456"
       />
-
       <AppInput
         v-model="form.PassportExpiry"
         id="passport_expiry"
@@ -96,50 +118,39 @@
         v-model="form.Qualification"
         id="qualification"
         label="المؤهل العلمي"
-        placeholder="مثال: بكالوريوس هندسة نفطية"
+        placeholder="مثال: بكالوريوس هندسة"
       />
-
-      <AppInput v-model="form.Residence" id="residence" label="السكن" placeholder="مثال: بنغازي" />
+      <AppInput v-model="form.Size" id="size" label="المقاس (الزي)" placeholder="مثال: XL, 42" />
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-      <AppInput
-        v-model="form.Size"
-        id="size"
-        label="المقاس (الزي)"
-        placeholder="مثال: XL, 2XL, -42"
+    <div class="flex items-center gap-2">
+      <input
+        v-model="form.IsFit"
+        type="checkbox"
+        id="is_fit"
+        class="h-5 w-5 rounded border-surface-border text-primary focus:ring-primary cursor-pointer"
       />
-
-      <div class="flex items-center gap-2 mb-2">
-        <input
-          v-model="form.IsFit"
-          type="checkbox"
-          id="is_fit"
-          class="h-5 w-5 rounded border-surface-border text-primary focus:ring-primary cursor-pointer"
-        />
-        <label
-          for="is_fit"
-          class="text-sm font-bold cursor-pointer select-none"
-          :class="form.IsFit ? 'text-success' : 'text-danger'"
-        >
-          حالة المترشح: {{ form.IsFit ? 'لائق طبياً' : 'غير لائق' }}
-        </label>
-      </div>
+      <label
+        for="is_fit"
+        class="text-sm font-bold cursor-pointer select-none"
+        :class="form.IsFit ? 'text-success' : 'text-danger'"
+      >
+        حالة المترشح: {{ form.IsFit ? 'لائق طبياً' : 'غير لائق' }}
+      </label>
     </div>
 
     <AppTextarea
       v-model="form.Notes"
       id="notes"
       label="ملاحظات"
-      placeholder="أي ملاحظات إضافية حول المترشح..."
+      placeholder="أي ملاحظات إضافية..."
       rows="3"
     />
 
     <div class="flex justify-end gap-3 mt-8 pt-5 border-t border-surface-border">
-      <AppButton type="button" variant="secondary" @click="$emit('cancel')" :disabled="loading">
-        إلغاء
-      </AppButton>
-
+      <AppButton type="button" variant="secondary" @click="$emit('cancel')" :disabled="loading"
+        >إلغاء</AppButton
+      >
       <AppButton
         type="submit"
         variant="primary"
@@ -154,7 +165,8 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
+import { useJobRequestStore } from '@/stores/jobRequestStore' // استيراد ستور الطلبات
 import AppInput from '@/components/ui/AppInput.vue'
 import AppTextarea from '@/components/ui/AppTextarea.vue'
 import AppButton from '@/components/ui/AppButton.vue'
@@ -166,8 +178,12 @@ const props = defineProps({
 
 const emit = defineEmits(['submit', 'cancel'])
 
-// 1. تعريف الحالة (State)
+// 1. تعريف الـ Stores
+const jobRequestStore = useJobRequestStore()
+
+// 2. تعريف الحالة (State)
 const form = ref({
+  job_request_id: null, // الحقل الجديد
   Name: '',
   BirthDate: '',
   Qualification: '',
@@ -179,17 +195,39 @@ const form = ref({
   Size: '',
   IsFit: true,
   Notes: '',
-  image: null, // سيحمل ملف الصورة
+  image: null,
 })
 
-const imagePreview = ref(null) // لحفظ رابط معاينة الصورة
+const imagePreview = ref(null)
 const fileInput = ref(null)
+
+// جلب قائمة الدورات من الستور لعرضها في القائمة المنسدلة
+const jobRequests = computed(() => jobRequestStore.items)
 
 const isEditing = computed(() => !!props.initialData)
 
-// 2. الدوال المساعدة
+// حساب العمر الحالي بناءً على تاريخ الميلاد
+const currentAge = computed(() => {
+  if (!form.value.BirthDate) return null
+
+  const birth = new Date(form.value.BirthDate)
+  const today = new Date()
+
+  let age = today.getFullYear() - birth.getFullYear()
+  const monthDiff = today.getMonth() - birth.getMonth()
+
+  // طرح سنة إذا لم يأتِ يوم ميلاده بعد في السنة الحالية
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--
+  }
+
+  return age
+})
+
+// 3. الدوال المساعدة
 const resetForm = () => {
   form.value = {
+    job_request_id: null,
     Name: '',
     BirthDate: '',
     Qualification: '',
@@ -207,7 +245,6 @@ const resetForm = () => {
   if (fileInput.value) fileInput.value.value = ''
 }
 
-// دالة لمعالجة اختيار الصورة وإنشاء رابط معاينة محلي لها
 const handleImageChange = (event) => {
   const file = event.target.files[0]
   if (file) {
@@ -215,17 +252,14 @@ const handleImageChange = (event) => {
     imagePreview.value = URL.createObjectURL(file)
   } else {
     form.value.image = null
-    // ✅ التعديل هنا: استخدام image_url
     imagePreview.value = props.initialData?.image_url || null
   }
 }
 
-// دالة الإرسال وتجهيز الـ FormData
 const handleSubmit = () => {
-  // 1. إنشاء كائن FormData (هذا ما سيغير Content-Type تلقائياً)
   const formData = new FormData()
 
-  // 2. إضافة الحقول الأساسية
+  // إضافة الحقول الأساسية للـ FormData
   formData.append('Name', form.value.Name)
   formData.append('NationalNo', form.value.NationalNo || '')
   formData.append('Phone', form.value.Phone || '')
@@ -233,30 +267,28 @@ const handleSubmit = () => {
   formData.append('Size', form.value.Size || '')
   formData.append('Qualification', form.value.Qualification || '')
   formData.append('Notes', form.value.Notes || '')
-
-  // تحويل البوليان لرقم (إلزامي للـ FormData)
   formData.append('IsFit', form.value.IsFit ? '1' : '0')
 
+  // إضافة الحقول الجديدة والاختيارية
+  if (form.value.job_request_id) formData.append('job_request_id', form.value.job_request_id)
   if (form.value.BirthDate) formData.append('BirthDate', form.value.BirthDate)
   if (form.value.PassportNo) formData.append('PassportNo', form.value.PassportNo)
   if (form.value.PassportExpiry) formData.append('PassportExpiry', form.value.PassportExpiry)
 
-  // 3. الجزء الحاسم: إضافة الصورة كملف حقيقي
-  // تأكد أن form.value.image هو كائن File وليس مصفوفة أو نص
   if (form.value.image instanceof File) {
     formData.append('image', form.value.image)
   }
 
-  // 4. إرسال الـ FormData بالكامل
   emit('submit', formData)
 }
 
-// 3. مراقبة البيانات المبدئية (للتعديل)
+// 4. مراقبة البيانات المبدئية عند التعديل
 watch(
   () => props.initialData,
   (newData) => {
     if (newData) {
       form.value = {
+        job_request_id: newData.job_request_id || null, // تعبئة رقم الدورة عند التعديل
         Name: newData.Name || '',
         BirthDate: newData.BirthDate || '',
         Qualification: newData.Qualification || '',
@@ -270,7 +302,6 @@ watch(
         Notes: newData.Notes || '',
         image: null,
       }
-      // ✅ التعديل هنا: استخدام image_url القادم من الباك إند
       imagePreview.value = newData.image_url || null
     } else {
       resetForm()
@@ -278,4 +309,11 @@ watch(
   },
   { immediate: true },
 )
+
+// 5. جلب الدورات التدريبية عند فتح الشاشة
+onMounted(async () => {
+  if (jobRequestStore.items.length === 0) {
+    await jobRequestStore.fetchJobRequests()
+  }
+})
 </script>

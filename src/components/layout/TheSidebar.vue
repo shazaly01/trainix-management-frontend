@@ -111,6 +111,7 @@ const allNavLinks = shallowRef([
     permission: 'dashboard.view',
   },
 
+  { name: 'طلبات الدورات التدريبية', routeName: 'JobRequestsList', permission: 'job_request.view' },
   // ✅ الشاشة الجديدة: إدارة المترشحين
   {
     name: 'إدارة المترشحين',
@@ -119,26 +120,15 @@ const allNavLinks = shallowRef([
     permission: 'candidate.view',
   },
 
-  // {
-  //   name: 'إدارة التوظيف',
-  //   icon: BriefcaseIcon,
-  //   permission: 'applicant.view',
-  //   children: [
-  //     { name: 'طلبات التوظيف', routeName: 'JobRequestsList', permission: 'job_request.view' },
-  //     { name: 'سجل المتقدمين', routeName: 'ApplicantsList', permission: 'applicant.view' },
-  //     { name: 'تتبع طلبات التوظيف', routeName: 'ApplicationsList', permission: 'application.view' },
-  //     { name: 'أجندة المقابلات', routeName: 'InterviewsList', permission: 'interview.view' },
-  //   ],
-  // },
-  // {
-  //   name: 'البيانات الأساسية',
-  //   icon: BuildingOfficeIcon,
-  //   permission: 'department.view',
-  //   children: [
-  //     { name: 'إدارة المدن', routeName: 'CitiesList', permission: 'city.view' },
-  //     { name: 'هيكلة الإدارات', routeName: 'DepartmentsList', permission: 'department.view' },
-  //   ],
-  // },
+  {
+    name: 'البيانات الأساسية',
+    icon: BuildingOfficeIcon,
+    permission: 'department.view',
+    children: [
+      { name: 'إدارة المدن', routeName: 'CitiesList', permission: 'city.view' },
+      { name: 'هيكلة الإدارات', routeName: 'DepartmentsList', permission: 'department.view' },
+    ],
+  },
   {
     name: 'إعدادات النظام',
     icon: Cog6ToothIcon,

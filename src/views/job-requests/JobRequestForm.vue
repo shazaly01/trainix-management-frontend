@@ -1,25 +1,25 @@
-<!--src\views\job-requests\JobRequestForm.vue-->
 <template>
   <form @submit.prevent="handleSubmit" class="space-y-6">
     <div
-      v-if="isEditing && initialData?.ApplyLink"
-      class="bg-primary/5 border border-primary/20 p-4 rounded-xl mb-6"
+      v-if="isEditing && trainingLink"
+      class="bg-blue-50 border border-blue-200 p-4 rounded-xl mb-6"
     >
-      <label class="text-xs text-primary font-bold block mb-2"
-        >رابط التقديم المباشر لهذه الوظيفة:</label
+      <label class="text-xs text-blue-700 font-bold block mb-2"
+        >رابط التسجيل المباشر لهذه الدورة:</label
       >
       <div class="flex items-center gap-2">
         <input
           type="text"
           readonly
-          :value="initialData.ApplyLink"
-          class="flex-1 bg-surface-ground border-none text-sm font-mono text-text-secondary py-1 px-2 rounded outline-none"
+          :value="trainingLink"
+          class="flex-1 bg-white border border-blue-100 text-sm font-mono text-slate-600 py-2 px-3 rounded-lg outline-none"
         />
         <AppButton
           type="button"
           size="sm"
           variant="primary"
-          @click="copyApplyLink(initialData.ApplyLink)"
+          @click="copyApplyLink"
+          class="bg-blue-600 hover:bg-blue-700 text-white"
         >
           نسخ الرابط
         </AppButton>
@@ -30,15 +30,15 @@
       <AppInput
         v-model="form.RequiredMajor"
         id="required_major"
-        label="المسمى الوظيفي / التخصص"
-        placeholder="مثال: مهندس برمجيات، محاسب تكاليف..."
+        label="اسم الدورة التدريبية"
+        placeholder="مثال: دورة صيانة الحاسب الآلي، إدارة المشاريع..."
         required
       />
 
       <DepartmentsDropdown
         id="department_id"
         v-model="form.department_id"
-        label="الإدارة التابع لها"
+        label="الجهة المنظمة / الإدارة التابع لها"
         required
       />
     </div>
@@ -47,8 +47,8 @@
       <AppInput
         v-model="form.RequiredDegreeLevel"
         id="degree_level"
-        label="المؤهل العلمي المطلوب"
-        placeholder="مثال: بكالوريوس، دبلوم عالي..."
+        label="المؤهل العلمي المطلوب (إن وجد)"
+        placeholder="مثال: بكالوريوس، دبلوم، أو غير محدد..."
         required
       />
 
@@ -56,7 +56,7 @@
         v-model="form.RequiredYearsOfExperience"
         id="exp_years"
         type="number"
-        label="سنوات الخبرة المطلوبة"
+        label="سنوات الخبرة المطلوبة (أو 0 للمبتدئين)"
         placeholder="0"
         required
       />
@@ -65,12 +65,14 @@
     <AppTextarea
       v-model="form.JobDescription"
       id="job_description"
-      label="وصف الوظيفة والمسؤوليات"
-      placeholder="اكتب هنا تفاصيل المهام الوظيفية والمسؤوليات المتوقعة..."
+      label="وصف الدورة والمحاور التدريبية"
+      placeholder="اكتب هنا تفاصيل الدورة، المحاور الأساسية، والأهداف المرجوة من التدريب..."
       rows="6"
     />
 
-    <div class="flex items-center gap-2">
+    <div
+      class="flex items-center gap-2 bg-surface-ground p-3 rounded-lg border border-surface-border"
+    >
       <input
         v-model="form.Status"
         type="checkbox"
@@ -81,12 +83,18 @@
       />
       <label
         for="is_open_status"
-        class="text-sm text-text-primary font-medium cursor-pointer select-none"
+        class="text-sm text-text-primary font-bold cursor-pointer select-none flex items-center gap-2"
       >
-        حالة الطلب:
-        <span :class="form.Status === 'Open' ? 'text-success' : 'text-danger'">{{
-          form.Status === 'Open' ? 'مفتوح (يسمح بالتقديم)' : 'مغلق (رابط التقديم سيتوقف)'
-        }}</span>
+        حالة التسجيل:
+        <span
+          :class="
+            form.Status === 'Open'
+              ? 'text-green-600 bg-green-50 px-2 py-0.5 rounded'
+              : 'text-red-600 bg-red-50 px-2 py-0.5 rounded'
+          "
+        >
+          {{ form.Status === 'Open' ? 'مفتوح (يسمح بالتسجيل)' : 'مغلق (الرابط سيتوقف)' }}
+        </span>
       </label>
     </div>
 
@@ -100,9 +108,9 @@
         variant="primary"
         :loading="loading"
         :disabled="loading"
-        class="px-8"
+        class="px-8 shadow-lg shadow-primary/30"
       >
-        {{ isEditing ? 'تحديث البيانات' : 'نشر الوظيفة الآن' }}
+        {{ isEditing ? 'تحديث بيانات الدورة' : 'نشر الدورة التدريبية' }}
       </AppButton>
     </div>
   </form>
@@ -122,7 +130,7 @@ const props = defineProps({
 
 const emit = defineEmits(['submit', 'cancel'])
 
-// 1. تعريف الحالة (State) أولاً
+// 1. تعريف الحالة (State)
 const form = ref({
   department_id: '',
   RequiredDegreeLevel: '',
@@ -134,7 +142,13 @@ const form = ref({
 
 const isEditing = computed(() => !!props.initialData)
 
-// 2. تعريف الدوال المساعدة (Helpers) ثانياً
+// ✅ خاصية ذكية لتعديل الرابط القادم من الباك إند ليناسب "التدريب"
+const trainingLink = computed(() => {
+  if (!props.initialData || !props.initialData.ApplyLink) return ''
+  return props.initialData.ApplyLink.replace('/apply/', '/training/')
+})
+
+// 2. تعريف الدوال المساعدة
 const resetForm = () => {
   form.value = {
     department_id: '',
@@ -146,10 +160,11 @@ const resetForm = () => {
   }
 }
 
-const copyApplyLink = (link) => {
-  if (!link) return
-  navigator.clipboard.writeText(link).then(() => {
-    alert('تم نسخ الرابط بنجاح!')
+// دالة نسخ الرابط بعد تعديله
+const copyApplyLink = () => {
+  if (!trainingLink.value) return
+  navigator.clipboard.writeText(trainingLink.value).then(() => {
+    alert('تم نسخ رابط الدورة التدريبية بنجاح!')
   })
 }
 
@@ -157,7 +172,7 @@ const handleSubmit = () => {
   emit('submit', { ...form.value })
 }
 
-// 3. تعريف الـ Watcher ثالثاً (الآن سيجد resetForm جاهزة)
+// 3. مراقبة التغييرات (Watcher)
 watch(
   () => props.initialData,
   (newData) => {
@@ -171,7 +186,7 @@ watch(
         Status: newData.Status || 'Open',
       }
     } else {
-      resetForm() // ✅ الآن ستعمل بدون أخطاء
+      resetForm()
     }
   },
   { immediate: true },

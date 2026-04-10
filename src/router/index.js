@@ -27,7 +27,6 @@ const JobRequestsList = () => import('@/views/job-requests/JobRequestsList.vue')
 const ApplicationsList = () => import('@/views/applications/ApplicationsList.vue')
 const InterviewsList = () => import('@/views/interviews/InterviewsList.vue')
 
-// ✅ تم وضع جميع المسارات بشكل صحيح داخل مصفوفة routes
 const routes = [
   // --- المسارات العامة (لا تتطلب مصادقة) ---
   {
@@ -39,7 +38,7 @@ const routes = [
     ],
   },
 
-  // ✅ مسار التوظيف الخارجي (الذي كان يظهر أبيض)
+  // ✅ مسار التوظيف الخارجي (للموظفين)
   {
     path: '/apply',
     component: PublicLayout,
@@ -50,11 +49,24 @@ const routes = [
         name: 'ExternalApplication',
         component: () => import('@/views/external-application/ApplicationWizard.vue'),
       },
-      // 2. 📍 المسار الجديد: التقديم لوظيفة محددة عبر الرابط
+      // 2. التقديم لوظيفة محددة عبر الرابط
       {
-        path: ':slug', // هنا سيتم استقبال النص الفريد للوظيفة
+        path: ':slug',
         name: 'PublicJobApply',
         component: () => import('@/views/external-application/PublicJobApplyView.vue'),
+      },
+    ],
+  },
+
+  // ✅ المسار الجديد: التقديم الخارجي للدورات التدريبية (للمتدربين)
+  {
+    path: '/training',
+    component: PublicLayout, // نستخدم نفس التخطيط العام
+    children: [
+      {
+        path: ':slug', // استقبال النص الفريد للدورة (Slug)
+        name: 'PublicTrainingApply',
+        component: () => import('@/views/external-application/PublicTrainingApplyView.vue'),
       },
     ],
   },
@@ -103,10 +115,10 @@ const routes = [
         path: 'candidates',
         name: 'CandidatesList',
         component: CandidatesList,
-        meta: { permission: 'candidate.view' }, // ربطها بالصلاحية التي أنشأناها في الباك إند
+        meta: { permission: 'candidate.view' },
       },
       {
-        path: 'candidates/form/:id?', // مسار الإضافة والتعديل (الـ id اختياري)
+        path: 'candidates/form/:id?',
         name: 'CandidateForm',
         component: () => import('@/views/candidates/CandidateForm.vue'),
         meta: { title: 'ملف المترشح' },
@@ -119,8 +131,8 @@ const routes = [
         meta: { permission: 'applicant.view' },
       },
       {
-        path: '/applicants/profile/:id?', // العلامة '?' تعني أن الـ id اختياري (لأن الإضافة لا تملك id)
-        name: 'ApplicantProfile', // ✅ يجب أن يتطابق هذا الاسم تماماً مع الاسم الموجود في goToCreate
+        path: '/applicants/profile/:id?',
+        name: 'ApplicantProfile',
         component: () => import('@/views/applicants/ApplicantProfile.vue'),
         meta: { title: 'ملف المتقدم' },
       },
@@ -177,7 +189,7 @@ const routes = [
   },
 
   // مسار للتعامل مع الصفحات غير الموجودة (404 Fallback)
-  { path: '/:pathMatch(.*)*', redirect: '/login' }, // يفضل توجيهه للـ login بدلاً من /
+  { path: '/:pathMatch(.*)*', redirect: '/login' },
 ]
 
 const router = createRouter({
@@ -201,7 +213,6 @@ router.beforeEach((to, from, next) => {
         console.warn(
           `Access denied: route "${String(to.name)}" requires permission "${requiredPermission}"`,
         )
-        // توجيه المستخدم للوحة التحكم إذا لم يكن يملك الصلاحية
         next({ name: 'Dashboard' })
       } else {
         next()

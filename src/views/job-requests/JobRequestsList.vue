@@ -1,8 +1,7 @@
-<!--src\views\job-requests\JobRequestsList.vue-->
 <template>
   <div class="space-y-6">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-      <h1 class="text-2xl font-bold text-text-primary">إدارة طلبات التوظيف</h1>
+      <h1 class="text-2xl font-bold text-text-primary">إدارة الدورات التدريبية</h1>
       <button
         @click="openCreateModal"
         class="bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-sm"
@@ -21,7 +20,7 @@
             d="M12 4v16m8-8H4"
           />
         </svg>
-        <span>إنشاء طلب توظيف</span>
+        <span>إضافة دورة تدريبية</span>
       </button>
     </div>
 
@@ -33,7 +32,7 @@
           v-model="searchQuery"
           @input="handleSearch"
           type="text"
-          placeholder="ابحث برقم الطلب أو التخصص..."
+          placeholder="ابحث برقم المرجع أو اسم الدورة..."
           class="w-full pl-4 pr-10 py-2 border border-surface-border rounded-lg bg-surface-ground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
         />
         <svg
@@ -86,7 +85,7 @@
     <JobRequestModal
       v-if="isModalOpen"
       :is-open="isModalOpen"
-      :job-request="selectedJobRequest"
+      :job-request-to-edit="selectedJobRequest"
       @close="closeModal"
       @saved="handleSaved"
     />
@@ -150,7 +149,7 @@ const handleSaved = () => {
 }
 
 const handleDelete = async (id) => {
-  if (confirm('هل أنت متأكد من رغبتك في حذف طلب التوظيف هذا؟')) {
+  if (confirm('هل أنت متأكد من رغبتك في حذف هذه الدورة التدريبية؟ سيتم إخفاؤها عن المتدربين.')) {
     try {
       await jobRequestStore.deleteJobRequest(id)
       if (!jobRequestStore.error) {
