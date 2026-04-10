@@ -1,6 +1,6 @@
 <template>
   <div class="bg-surface-ground border border-surface-border p-4 rounded-xl mb-6">
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4 items-end">
       <div class="lg:col-span-2">
         <AppInput
           v-model="filters.search"
@@ -16,6 +16,15 @@
           id="filter_residence"
           label="المدينة / السكن"
           placeholder="مثال: بنغازي"
+        />
+      </div>
+
+      <div>
+        <AppInput
+          v-model="filters.Qualification"
+          id="filter_qualification"
+          label="المؤهل العلمي"
+          placeholder="مثال: هندسة"
         />
       </div>
 
@@ -60,7 +69,7 @@
         </select>
       </div>
 
-      <div class="md:col-span-3 lg:col-span-6 flex justify-end mt-2">
+      <div class="md:col-span-3 lg:col-span-7 flex justify-end mt-2">
         <AppButton type="button" variant="secondary" @click="resetFilters" size="sm">
           مسح كل الفلاتر
         </AppButton>
@@ -85,7 +94,8 @@ const filters = ref({
   Residence: '',
   Size: '',
   IsFit: '',
-  TrainingType: '', // 👈 إضافة الحقل هنا
+  TrainingType: '',
+  Qualification: '', // 👈 إضافة حقل المؤهل العلمي هنا
 })
 
 let debounceTimeout = null
@@ -96,7 +106,8 @@ const emitFilters = () => {
   if (filters.value.Residence) activeFilters.Residence = filters.value.Residence
   if (filters.value.Size) activeFilters.Size = filters.value.Size
   if (filters.value.IsFit !== '') activeFilters.IsFit = filters.value.IsFit
-  if (filters.value.TrainingType) activeFilters.TrainingType = filters.value.TrainingType // 👈 إرساله للباك إند
+  if (filters.value.TrainingType) activeFilters.TrainingType = filters.value.TrainingType
+  if (filters.value.Qualification) activeFilters.Qualification = filters.value.Qualification // 👈 إرساله للباك إند
 
   emit('filter', activeFilters)
 }
@@ -118,7 +129,8 @@ const resetFilters = () => {
     Residence: '',
     Size: '',
     IsFit: '',
-    TrainingType: '', // 👈 إعادة التعيين
+    TrainingType: '',
+    Qualification: '', // 👈 إعادة التعيين
   }
 }
 </script>
