@@ -339,13 +339,27 @@ const handleDataResumed = (data) => {
   isUpdating.value = true
   showVerifyModal.value = false
 
+  // دالة مساعدة لتنسيق التاريخ ليقبله الـ HTML Input
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return ''
+    // نأخذ أول 10 أحرف فقط (YYYY-MM-DD) ونستبعد الوقت أو أي إضافات
+    return dateString.split('T')[0].split(' ')[0]
+  }
+
+  // تعبئة الفورم مع معالجة التواريخ
   form.value = {
     ...form.value,
     ...data,
+    BirthDate: formatDateForInput(data.BirthDate),
+    PassportExpiry: formatDateForInput(data.PassportExpiry),
     verification_code: data.VerificationCode || data.verification_code,
   }
-  imagePreview.value = data.image_url || null
-  window.scrollTo({ top: 300, behavior: 'smooth' })
+
+  // معالجة عرض الصورة (تأكد أن الاسم مطابق لما يرسله الباك إند)
+  imagePreview.value = data.image_url || (data.image ? data.image.file_path : null)
+
+  // التمرير لمكان الفورم ليبدأ المستخدم التعديل
+  window.scrollTo({ top: 400, behavior: 'smooth' })
 }
 
 const handleSubmit = async () => {
