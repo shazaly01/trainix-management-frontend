@@ -122,21 +122,21 @@
 
         <div class="flex-grow bg-gray-900 flex items-center justify-center overflow-auto p-2">
           <img
-            v-if="isImage(previewDoc.extension)"
+            v-if="isImage(previewDoc)"
             :src="previewDoc.url"
             class="max-w-full max-h-full object-contain"
             alt="Preview"
           />
 
           <video
-            v-else-if="isVideo(previewDoc.extension)"
+            v-else-if="isVideo(previewDoc)"
             :src="previewDoc.url"
             controls
             class="max-w-full max-h-full"
           ></video>
 
           <iframe
-            v-else-if="canPreviewInIframe(previewDoc.extension)"
+            v-else-if="canPreviewInIframe(previewDoc)"
             :src="previewDoc.url"
             class="w-full h-full border-none bg-white"
           ></iframe>
@@ -282,20 +282,25 @@ const closePreview = () => {
 }
 
 // دالة مساعدة: هل الملف صورة؟
-const isImage = (ext) => {
-  if (!ext) return false
-  return ['jpeg', 'jpg', 'gif', 'png', 'webp', 'svg'].includes(ext.toLowerCase())
+// --- [جديد] دالة لاستخراج الامتداد من مسار الملف ---
+const getFileExtension = (doc) => {
+  if (!doc || !doc.file_path) return ''
+  const parts = doc.file_path.split('.')
+  return parts.length > 1 ? parts.pop().toLowerCase() : ''
+}
+
+// دالة مساعدة: هل الملف صورة؟
+const isImage = (doc) => {
+  return ['jpeg', 'jpg', 'gif', 'png', 'webp', 'svg'].includes(getFileExtension(doc))
 }
 
 // دالة مساعدة: هل الملف فيديو؟
-const isVideo = (ext) => {
-  if (!ext) return false
-  return ['mp4', 'mov'].includes(ext.toLowerCase())
+const isVideo = (doc) => {
+  return ['mp4', 'mov'].includes(getFileExtension(doc))
 }
 
 // دالة مساعدة: هل الملف قابل للعرض في Iframe؟
-const canPreviewInIframe = (ext) => {
-  if (!ext) return false
-  return ['pdf', 'txt', 'json'].includes(ext.toLowerCase())
+const canPreviewInIframe = (doc) => {
+  return ['pdf', 'txt', 'json'].includes(getFileExtension(doc))
 }
 </script>
