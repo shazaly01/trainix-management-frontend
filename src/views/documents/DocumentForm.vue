@@ -87,8 +87,9 @@ const emit = defineEmits(['submit', 'cancel'])
 
 // دالة لإنشاء نموذج فارغ متوافق مع الحقول الجديدة في السيرفر
 const createFreshForm = () => ({
-  target_id: props.targetId,
-  target_type: props.targetType,
+  documentable_id: props.targetId, // 👈 تغيير الاسم هنا
+  documentable_type: props.targetType, // 👈 تغيير الاسم هنا
+  DocumentType: 'Applicant File', // 👈 إضافة نوع المستند لأن الباك إند يحتاجه
   name: '',
   file: null,
 })
@@ -130,8 +131,22 @@ const handleSubmit = () => {
     fileError.value = 'الرجاء اختيار ملف أولاً.'
     return
   }
-  // إرسال كائن النموذج المحدث (target_id, target_type, name, file)
-  emit('submit', form.value)
+
+  // 🌟 بناء FormData لتجهيز الملف والنصوص للإرسال
+  const actualFormData = new FormData()
+
+  actualFormData.append('documentable_id', form.value.documentable_id)
+  actualFormData.append('documentable_type', form.value.documentable_type)
+  actualFormData.append('DocumentType', form.value.DocumentType)
+
+  // إذا لم يكتب المستخدم اسماً، نستخدم اسم الملف الأصلي
+  actualFormData.append('name', form.value.name || form.value.file.name)
+
+  // إرفاق الملف الفعلي
+  actualFormData.append('file', form.value.file)
+
+  // إرسال الـ FormData الجاهز إلى الـ Modal
+  emit('submit', actualFormData)
 }
 
 const handleCancel = () => {

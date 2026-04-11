@@ -204,6 +204,22 @@
       <template #cell-actions="{ item }">
         <div class="flex items-center gap-2">
           <button
+            v-if="auth.can('document.view')"
+            @click.stop="$emit('manage-documents', item)"
+            class="w-9 h-9 bg-slate-800 text-purple-400 rounded-xl hover:bg-purple-500 hover:text-white transition-all flex items-center justify-center border border-slate-700/50 shadow-lg"
+            title="إدارة المستندات"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              />
+            </svg>
+          </button>
+
+          <button
             v-if="auth.can('candidate.update')"
             @click.stop="$emit('edit', item)"
             class="w-9 h-9 bg-slate-800 text-sky-400 rounded-xl hover:bg-sky-500 hover:text-white transition-all flex items-center justify-center border border-slate-700/50 shadow-lg"
@@ -239,16 +255,16 @@
 <script setup>
 import { computed } from 'vue'
 import AppTable from '@/components/ui/AppTable.vue'
-import { useAuthStore } from '@/stores/authStore' // 👈 استيراد ستور الصلاحيات
+import { useAuthStore } from '@/stores/authStore'
 
 const props = defineProps({
   items: { type: Array, required: true },
   isLoading: { type: Boolean, default: false },
 })
 
-defineEmits(['edit', 'delete', 'row-click'])
+defineEmits(['edit', 'delete', 'row-click', 'manage-documents'])
 
-const auth = useAuthStore() // 👈 تهيئة الستور
+const auth = useAuthStore()
 
 const calculateAge = (birthDate) => {
   if (!birthDate) return '--'
@@ -272,9 +288,9 @@ const filteredHeaders = computed(() => {
     { key: 'Notes', label: 'ملاحظات' },
   ]
 
-  // إذا كان المستخدم يملك صلاحية التعديل أو الحذف (أو هو Super Admin)
-  if (auth.can('candidate.update') || auth.can('candidate.delete')) {
-    baseHeaders.push({ key: 'actions', label: '', class: 'w-24' })
+  // إذا كان المستخدم يملك أي صلاحية تتعلق بالإجراءات نعرض العمود
+  if (auth.can('candidate.update') || auth.can('candidate.delete') || auth.can('document.view')) {
+    baseHeaders.push({ key: 'actions', label: '', class: 'w-32' })
   }
 
   return baseHeaders

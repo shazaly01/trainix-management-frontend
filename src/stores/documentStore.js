@@ -12,11 +12,18 @@ export const useDocumentStore = defineStore('document', () => {
   const error = ref(null)
 
   // --- Actions ---
-  async function fetchDocuments(page = 1, search = '') {
+  async function fetchDocuments(targetId = null, targetType = null, page = 1, search = '') {
     loading.value = true
     error.value = null
     try {
-      const response = await documentService.get({ page, search })
+      // تجهيز المعاملات (Parameters) للإرسال للباك إند
+      const params = { page, search }
+
+      // إذا تم تمرير المالك، نقوم بإضافته للفلاتر
+      if (targetId) params.documentable_id = targetId
+      if (targetType) params.documentable_type = targetType
+
+      const response = await documentService.get(params)
       documents.value = response.data.data
       pagination.value = response.data.meta || {}
     } catch (err) {
@@ -48,7 +55,13 @@ export const useDocumentStore = defineStore('document', () => {
     loading.value = true
     error.value = null
     try {
-      await documentService.create(formData)
+      const response = await documentService.create(formData)
+
+      // 🌟 السر هنا: السيرفر يرجع بيانات المستند الجديد في الاستجابة
+      // نقوم بإضافته في بداية المصفوفة (unshift) ليظهر للمستخدم فوراً
+      if (response.data && response.data.data) {
+        documents.value.unshift(response.data.data)
+      }
     } catch (err) {
       error.value = err.response?.data?.message || 'فشل في رفع المستند.'
       console.error(err)
@@ -63,6 +76,9 @@ export const useDocumentStore = defineStore('document', () => {
     error.value = null
     try {
       await documentService.delete(id)
+
+      // 🌟 تحديث القائمة بحذف المستند منها فوراً (بدون الحاجة لعمل ريفريش)
+      documents.value = documents.value.filter((doc) => doc.id !== id)
     } catch (err) {
       error.value = err.response?.data?.message || 'فشل في حذف المستند.'
       console.error(err)

@@ -31,6 +31,7 @@
       :isLoading="candidateStore.loading"
       @edit="openEditModal"
       @delete="handleDelete"
+      @manage-documents="openDocumentsModal"
     />
 
     <div v-if="candidateStore.pagination?.total > 0" class="flex justify-between items-center py-4">
@@ -60,6 +61,12 @@
       @close="closeModal"
       @saved="handleSaved"
     />
+
+    <DocumentsManagerModal
+      v-model="isDocsModalOpen"
+      :owner="currentDocOwner"
+      target-type="App\Models\Candidate"
+    />
   </div>
 </template>
 
@@ -69,6 +76,8 @@ import { useCandidateStore } from '@/stores/candidateStore'
 import CandidatesTable from './CandidatesTable.vue'
 import CandidateModal from './CandidateModal.vue'
 import CandidatesFilters from './CandidatesFilters.vue'
+// استيراد المودال الخاص بالمستندات
+import DocumentsManagerModal from '@/views/documents/DocumentsManagerModal.vue'
 
 const candidateStore = useCandidateStore()
 
@@ -77,9 +86,13 @@ const currentPage = ref(1)
 const currentSearch = ref('')
 const currentFilters = ref({})
 
-// حالة المودال
+// حالة مودال المترشح
 const isModalOpen = ref(false)
 const selectedCandidate = ref(null)
+
+// 🌟 حالة مودال المستندات
+const isDocsModalOpen = ref(false)
+const currentDocOwner = ref({ id: null, name: '' })
 
 // دالة جلب البيانات من الـ Store مع تمرير الفلاتر
 const fetchData = () => {
@@ -93,13 +106,9 @@ onMounted(() => {
 
 // استقبال الفلاتر من مكون CandidatesFilters
 const handleFilter = (filtersObj) => {
-  // فصل نص البحث عن باقي الفلاتر ليتوافق مع تصميم الـ Store
   currentSearch.value = filtersObj.search || ''
-
   const { search, ...restFilters } = filtersObj
   currentFilters.value = restFilters
-
-  // إعادة التصفح للصفحة الأولى عند كل عملية بحث جديدة
   currentPage.value = 1
   fetchData()
 }
@@ -122,7 +131,7 @@ const openEditModal = (candidate) => {
   isModalOpen.value = true
 }
 
-// إغلاق المودال
+// إغلاق مودال المترشح
 const closeModal = () => {
   isModalOpen.value = false
   selectedCandidate.value = null
@@ -146,5 +155,14 @@ const handleDelete = async (id) => {
       console.error('حدث خطأ أثناء الحذف:', error)
     }
   }
+}
+
+// 🌟 فتح مودال إدارة المستندات وتمرير بيانات المترشح كمالك
+const openDocumentsModal = (candidate) => {
+  currentDocOwner.value = {
+    id: candidate.id,
+    name: candidate.Name, // تحويل Name إلى name ليتوافق مع ما يتوقعه Modal المستندات
+  }
+  isDocsModalOpen.value = true
 }
 </script>
