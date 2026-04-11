@@ -1,3 +1,4 @@
+<!--src\views\reports\CompaniesSummaryReport.vue-->
 <template>
   <div class="space-y-6 print:hidden">
     <div class="flex justify-between items-center">

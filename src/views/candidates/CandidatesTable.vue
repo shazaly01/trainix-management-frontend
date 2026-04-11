@@ -1,3 +1,4 @@
+<!--src\views\candidates\CandidatesTable.vue-->
 <template>
   <div
     class="bg-[#0f172a] rounded-[1.5rem] shadow-2xl border border-slate-800/50 overflow-hidden font-sans"
@@ -186,11 +187,20 @@
           >
             {{ item.TrainingType === 'external' ? 'تدريب خارجي' : 'تدريب داخلي' }}
           </span>
-          <div
-            v-if="item.Size"
-            class="text-[9px] font-black text-slate-400 bg-slate-800 px-2 py-0.5 border border-slate-700 rounded-lg w-fit"
-          >
-            SIZE: {{ item.Size }}
+
+          <div class="flex items-center gap-2 mt-1">
+            <div
+              v-if="item.Size"
+              class="text-[9px] font-black text-slate-400 bg-slate-800 px-2 py-0.5 border border-slate-700 rounded-lg w-fit"
+            >
+              SIZE: {{ item.Size }}
+            </div>
+            <div
+              v-if="item.ShoeSize"
+              class="text-[9px] font-black text-slate-400 bg-slate-800 px-2 py-0.5 border border-slate-700 rounded-lg w-fit"
+            >
+              SHOE: {{ item.ShoeSize }}
+            </div>
           </div>
         </div>
       </template>
@@ -284,7 +294,7 @@ const filteredHeaders = computed(() => {
     { key: 'Docs', label: 'الوثائق الثبوتية' },
     { key: 'BankDetails', label: 'البيانات المالية' },
     { key: 'ContactLocation', label: 'الاتصال والسكن' },
-    { key: 'StatusTypeSize', label: 'الحالة والنوع' },
+    { key: 'StatusTypeSize', label: 'الحالة والمقاسات' },
     { key: 'Notes', label: 'ملاحظات' },
   ]
 

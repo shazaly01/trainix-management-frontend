@@ -71,32 +71,6 @@
       </div>
 
       <form @submit.prevent="handleSubmit" class="space-y-10">
-        <div class="flex flex-col items-center gap-4">
-          <div class="relative group cursor-pointer">
-            <div
-              class="w-32 h-32 rounded-[2rem] bg-slate-100 border-2 border-dashed border-blue-400 flex items-center justify-center overflow-hidden transition-all group-hover:border-blue-600 group-hover:bg-blue-50"
-            >
-              <img v-if="imagePreview" :src="imagePreview" class="w-full h-full object-cover" />
-              <div v-else class="text-blue-500 flex flex-col items-center">
-                <svg class="w-10 h-10 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" stroke-width="2" />
-                  <path
-                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                    stroke-width="2"
-                  />
-                </svg>
-                <span class="text-[10px] font-black uppercase">أرفق صورة</span>
-              </div>
-            </div>
-            <input
-              type="file"
-              @change="handleImageChange"
-              class="absolute inset-0 opacity-0 cursor-pointer"
-              accept="image/*"
-            />
-          </div>
-        </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
           <div class="space-y-2">
             <label class="public-label"
@@ -197,7 +171,17 @@
             <input v-model="form.PassportExpiry" type="date" class="public-input" />
           </div>
 
-          <div class="space-y-3 md:col-span-2 mt-4">
+          <div class="space-y-2">
+            <label class="public-label">رقم الحذاء</label>
+            <input
+              v-model="form.ShoeSize"
+              type="number"
+              placeholder="مثال: 42"
+              class="public-input"
+            />
+          </div>
+
+          <div class="space-y-3 md:col-span-2 mt-2">
             <label class="public-label"
               >مقاس الزي الموحد (Uniform Size) <span class="text-red-500">*</span></label
             >
@@ -219,6 +203,26 @@
             </div>
           </div>
 
+          <div class="space-y-2">
+            <label class="public-label">اسم المصرف (اختياري)</label>
+            <input
+              v-model="form.BankName"
+              type="text"
+              placeholder="مثال: مصرف الوحدة"
+              class="public-input"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <label class="public-label">رقم الحساب (اختياري)</label>
+            <input
+              v-model="form.BankAccountNo"
+              type="text"
+              placeholder="رقم الحساب الجاري..."
+              class="public-input font-mono"
+            />
+          </div>
+
           <div class="space-y-2 md:col-span-2">
             <label class="public-label">ملاحظات إضافية (اختياري)</label>
             <textarea
@@ -228,7 +232,6 @@
             ></textarea>
           </div>
         </div>
-
         <div class="pt-6">
           <button
             type="submit"
@@ -281,6 +284,9 @@ const form = ref({
   PassportNo: '',
   PassportExpiry: '',
   Size: 'L',
+  ShoeSize: '',
+  BankName: '', // 👈 إضافة هذا الحقل
+  BankAccountNo: '', // 👈 إضافة هذا الحقل
   Notes: '',
   image: null,
   verification_code: '',
@@ -314,7 +320,10 @@ const handleDataResumed = (data) => {
   form.value = {
     ...form.value,
     ...data,
+    ShoeSize: data.ShoeSize || '',
     TrainingType: data.TrainingType || 'internal', // استرجاع نوع التدريب عند التعديل
+    BankName: data.BankName || '',
+    BankAccountNo: data.BankAccountNo || '',
     BirthDate: formatDateForInput(data.BirthDate),
     PassportExpiry: formatDateForInput(data.PassportExpiry),
     verification_code: data.VerificationCode || data.verification_code,

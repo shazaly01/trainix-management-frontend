@@ -124,14 +124,29 @@
       />
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 gap-4">
       <AppInput
         v-model="form.Qualification"
         id="qualification"
         label="المؤهل العلمي"
-        placeholder="مثال: بكالوريوس هندسة"
+        placeholder="مثال: بكالوريوس هندسة، تخصص كذا..."
       />
-      <AppInput v-model="form.Size" id="size" label="المقاس (الزي)" placeholder="مثال: XL, 42" />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <AppInput
+        v-model="form.Size"
+        id="size"
+        label="مقاس الزي الموحد"
+        placeholder="مثال: XL, L, M"
+      />
+      <AppInput
+        v-model="form.ShoeSize"
+        id="shoe_size"
+        type="number"
+        label="رقم الحذاء"
+        placeholder="مثال: 42"
+      />
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -220,6 +235,7 @@ const form = ref({
   Phone: '',
   Residence: '',
   Size: '',
+  ShoeSize: '',
   IsFit: true,
   Notes: '',
   BankName: '', // 👈 أضف هذا
@@ -267,6 +283,7 @@ const resetForm = () => {
     Phone: '',
     Residence: '',
     Size: '',
+    ShoeSize: '',
     IsFit: true,
     Notes: '',
     BankName: '',
@@ -298,6 +315,7 @@ const handleSubmit = () => {
   formData.append('Phone', form.value.Phone || '')
   formData.append('Residence', form.value.Residence || '')
   formData.append('Size', form.value.Size || '')
+  formData.append('ShoeSize', form.value.ShoeSize || '')
   formData.append('Qualification', form.value.Qualification || '')
   formData.append('Notes', form.value.Notes || '')
   formData.append('IsFit', form.value.IsFit ? '1' : '0')
@@ -333,6 +351,7 @@ watch(
         Phone: newData.Phone || '',
         Residence: newData.Residence || '',
         Size: newData.Size || '',
+        ShoeSize: newData.ShoeSize || '',
         IsFit: newData.IsFit ?? true,
         Notes: newData.Notes || '',
         BankName: newData.BankName || '', // 👈 جلب البيانات عند التعديل

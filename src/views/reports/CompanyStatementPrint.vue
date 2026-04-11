@@ -1,3 +1,4 @@
+<!--src\views\reports\CompanyStatementPrint.vue-->
 <template>
   <div class="print-portrait-container bg-white text-black p-4 font-sans" dir="rtl">
     <div

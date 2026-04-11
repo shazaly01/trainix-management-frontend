@@ -26,6 +26,7 @@ const ApplicantsList = () => import('@/views/applicants/ApplicantsList.vue')
 const JobRequestsList = () => import('@/views/job-requests/JobRequestsList.vue')
 const ApplicationsList = () => import('@/views/applications/ApplicationsList.vue')
 const InterviewsList = () => import('@/views/interviews/InterviewsList.vue')
+const CandidatesPrint = () => import('@/views/candidates/CandidatesReportView.vue')
 
 const routes = [
   // --- المسارات العامة (لا تتطلب مصادقة) ---
@@ -69,6 +70,13 @@ const routes = [
         component: () => import('@/views/external-application/PublicTrainingApplyView.vue'),
       },
     ],
+  },
+
+  {
+    path: '/candidates-print',
+    name: 'CandidatesPrint',
+    component: CandidatesPrint,
+    meta: { requiresAuth: true }, // لا يزال يتطلب تسجيل دخول لكنه خارج الـ AppLayout
   },
 
   // --- المسارات المحمية (تتطلب مصادقة) ---

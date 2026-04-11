@@ -96,6 +96,21 @@ export const useCandidateStore = defineStore('candidate', () => {
     }
   }
 
+  async function fetchAllForReport(search = '', filters = {}) {
+    loading.value = true
+    try {
+      // نرسل per_page: -1 لكي ينفذ الباك إند كود الـ get() بدلاً من paginate()
+      const response = await candidateService.get(1, search, { ...filters, per_page: -1 })
+      return response.data.data // نعيد البيانات مباشرة لاستخدامها في مكون التقرير
+    } catch (err) {
+      error.value = 'حدث خطأ أثناء تجهيز بيانات التقرير'
+      console.error(err)
+      return []
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     candidates,
     pagination,
@@ -107,5 +122,6 @@ export const useCandidateStore = defineStore('candidate', () => {
     createCandidate,
     updateCandidate,
     deleteCandidate,
+    fetchAllForReport,
   }
 })
