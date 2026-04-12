@@ -94,8 +94,8 @@ import {
   XMarkIcon,
   ChevronDownIcon,
   UserGroupIcon,
+  ClipboardDocumentCheckIcon, // 👈 تمت الإضافة هنا
 } from '@heroicons/vue/24/outline'
-
 defineEmits(['close-sidebar'])
 
 const authStore = useAuthStore()
@@ -111,12 +111,25 @@ const allNavLinks = shallowRef([
     permission: 'dashboard.view',
   },
 
-  { name: 'طلبات الدورات التدريبية', routeName: 'JobRequestsList', permission: 'job_request.view' },
-  // ✅ الشاشة الجديدة: إدارة المترشحين
   {
-    name: 'إدارة المترشحين',
+    name: 'طلبات الدورات التدريبية',
+    routeName: 'JobRequestsList',
+    // ⚠️ لا تنسَ إضافة أيقونة هنا إذا كنت ترغب في ذلك
+    permission: 'job_request.view',
+  },
+
+  // ✅ الشاشة الجديدة: مراجعة الطلبات الخارجية
+  {
+    name: 'مراجعة التقديم الخارجى',
+    routeName: 'ExternalCandidates', // تأكد أن هذا يطابق الـ name في ملف router/index.js
+    icon: ClipboardDocumentCheckIcon, // ⚠️ تذكر استيراد هذه الأيقونة من heroicons
+    permission: 'candidate.update', // أو إذا كان لديك صلاحية مخصصة مثل 'candidate.approve'
+  },
+
+  {
+    name: 'إدارة المترشحين (النهائية)',
     routeName: 'CandidatesList',
-    icon: UserGroupIcon, // ⚠️ تذكر استيراد هذه الأيقونة في أعلى الملف
+    icon: UserGroupIcon,
     permission: 'candidate.view',
   },
 
@@ -139,8 +152,7 @@ const allNavLinks = shallowRef([
       //{ name: 'النسخ الاحتياطي', routeName: 'BackupsList', permission: 'backup.view' },
     ],
   },
-])
-// --- المنطق الخاص بفتح وإغلاق القوائم وتلوينها (لم يتم تغييره لأنه ممتاز) ---
+]) // --- المنطق الخاص بفتح وإغلاق القوائم وتلوينها (لم يتم تغييره لأنه ممتاز) ---
 
 const isGroupActive = (group) => {
   if (!group.children) return false

@@ -63,4 +63,20 @@ export default {
     // تحديث الطلب (الباك إند هنا مجهز لاستقبال POST لتسهيل التعامل مع الـ FormData والصور)
     return apiClient.post('/public/candidates/update', payload)
   },
+
+  getPendingList(page = 1, search = '', filters = {}) {
+    // 👈 أضفنا filters هنا
+    return apiClient.get(`/candidates/pending`, {
+      params: {
+        page,
+        search,
+        ...filters, // 👈 دمج الفلاتر الإضافية ليتم إرسالها للباك إند
+      },
+    })
+  },
+
+  // اعتماد مترشح ونقله للقائمة النهائية
+  approveCandidate(id) {
+    return apiClient.post(`/candidates/${id}/approve`)
+  },
 }

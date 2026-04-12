@@ -133,6 +133,19 @@ const routes = [
       },
 
       {
+        path: '/external-candidates',
+        name: 'ExternalCandidates',
+        // نستخدم الاستدعاء الكسول (Lazy Loading) لتحسين الأداء
+        component: () => import('@/views/external-candidates/PendingCandidatesView.vue'),
+        meta: {
+          title: 'مراجعة الطلبات الخارجية',
+          // إذا كان لديك نظام صلاحيات، يمكنك إضافته هنا، مثلاً:
+          // requireAuth: true,
+          // permission: 'candidate.approve'
+        },
+      },
+
+      {
         path: 'applicants',
         name: 'ApplicantsList',
         component: ApplicantsList,

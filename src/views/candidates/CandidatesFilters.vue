@@ -1,3 +1,4 @@
+<!--src\views\candidates\CandidatesFilters.vue-->
 <template>
   <div class="bg-surface-ground border border-surface-border p-6 rounded-[1.5rem] mb-6 shadow-sm">
     <div class="flex items-center gap-2 mb-6 pb-3 border-b border-surface-border/50">
