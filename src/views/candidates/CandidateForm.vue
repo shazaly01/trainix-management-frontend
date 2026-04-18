@@ -164,19 +164,29 @@
       />
     </div>
 
-    <div class="flex items-center gap-2">
+    <div v-if="authStore.can('candidate.view_isfit')" class="flex items-center gap-2">
       <input
         v-model="form.IsFit"
         type="checkbox"
         id="is_fit"
-        class="h-5 w-5 rounded border-surface-border text-primary focus:ring-primary cursor-pointer"
+        :disabled="!authStore.can('candidate.update_isfit')"
+        class="h-5 w-5 rounded border-surface-border text-primary focus:ring-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       />
       <label
         for="is_fit"
         class="text-sm font-bold cursor-pointer select-none"
-        :class="form.IsFit ? 'text-success' : 'text-danger'"
+        :class="[
+          form.IsFit ? 'text-success' : 'text-danger',
+          !authStore.can('candidate.update_isfit') ? 'opacity-70 cursor-not-allowed' : '',
+        ]"
       >
         حالة المترشح: {{ form.IsFit ? 'لائق طبياً' : 'غير لائق' }}
+        <span
+          v-if="!authStore.can('candidate.update_isfit')"
+          class="text-[10px] block font-normal text-text-muted"
+        >
+          (عرض فقط - لا تملك صلاحية التعديل)
+        </span>
       </label>
     </div>
 
@@ -208,6 +218,7 @@
 <script setup>
 import { ref, watch, computed, onMounted } from 'vue'
 import { useJobRequestStore } from '@/stores/jobRequestStore' // استيراد ستور الطلبات
+import { useAuthStore } from '@/stores/authStore'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppTextarea from '@/components/ui/AppTextarea.vue'
 import AppButton from '@/components/ui/AppButton.vue'
@@ -221,6 +232,8 @@ const emit = defineEmits(['submit', 'cancel'])
 
 // 1. تعريف الـ Stores
 const jobRequestStore = useJobRequestStore()
+
+const authStore = useAuthStore()
 
 // 2. تعريف الحالة (State)
 const form = ref({
@@ -236,7 +249,7 @@ const form = ref({
   Residence: '',
   Size: '',
   ShoeSize: '',
-  IsFit: true,
+  IsFit: false,
   Notes: '',
   BankName: '', // 👈 أضف هذا
   BankAccountNo: '', // 👈 أضف هذا
@@ -284,7 +297,7 @@ const resetForm = () => {
     Residence: '',
     Size: '',
     ShoeSize: '',
-    IsFit: true,
+    IsFit: false,
     Notes: '',
     BankName: '',
     BankAccountNo: '',
