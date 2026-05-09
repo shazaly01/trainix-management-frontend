@@ -25,10 +25,18 @@
             </div>
           </div>
           <div class="flex flex-col gap-0.5">
-            <span class="text-white font-bold text-[15px] leading-tight">{{ item.Name }}</span>
-            <span class="text-sky-400 font-mono text-xs font-black opacity-80"
-              >#{{ item.SequenceNo || '---' }}</span
-            >
+            <div class="flex items-center gap-2">
+              <span class="text-white font-bold text-[15px] leading-tight">{{ item.Name }}</span>
+              <span
+                v-if="item.is_withdrawn"
+                class="px-1.5 py-0.5 text-[9px] font-black rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 shrink-0"
+              >
+                منسحب
+              </span>
+            </div>
+            <span class="text-sky-400 font-mono text-xs font-black opacity-80">
+              #{{ item.SequenceNo || '---' }}
+            </span>
           </div>
         </div>
       </template>

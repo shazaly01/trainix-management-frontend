@@ -82,6 +82,20 @@
 
         <div class="flex flex-col">
           <label class="block text-[13px] font-bold text-text-primary mb-1.5 ml-1"
+            >حالة الانضمام</label
+          >
+          <select
+            v-model="filters.is_withdrawn"
+            class="w-full h-[42px] bg-white dark:bg-surface-section border border-surface-border text-text-primary text-sm rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary block px-3 outline-none transition-all cursor-pointer"
+          >
+            <option value="">الكل</option>
+            <option value="false">المنضمين فقط</option>
+            <option value="true">المنسحبين فقط</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="block text-[13px] font-bold text-text-primary mb-1.5 ml-1"
             >نوع التدريب</label
           >
           <select
@@ -134,6 +148,7 @@ const filters = ref({
   Size: '',
   ShoeSize: '',
   IsFit: '',
+  is_withdrawn: '',
   TrainingType: '',
   Qualification: '',
 })
@@ -147,6 +162,7 @@ const emitFilters = () => {
   if (filters.value.Size) activeFilters.Size = filters.value.Size
   if (filters.value.ShoeSize) activeFilters.ShoeSize = filters.value.ShoeSize
   if (filters.value.IsFit !== '') activeFilters.IsFit = filters.value.IsFit
+  if (filters.value.is_withdrawn !== '') activeFilters.is_withdrawn = filters.value.is_withdrawn
   if (filters.value.TrainingType) activeFilters.TrainingType = filters.value.TrainingType
   if (filters.value.Qualification) activeFilters.Qualification = filters.value.Qualification
 
@@ -171,6 +187,7 @@ const resetFilters = () => {
     Size: '',
     ShoeSize: '',
     IsFit: '',
+    is_withdrawn: '',
     TrainingType: '',
     Qualification: '',
   }

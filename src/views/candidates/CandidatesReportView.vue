@@ -38,7 +38,7 @@
       </p>
     </div>
 
-    <div class="grid grid-cols-4 gap-3 mb-6">
+    <div class="grid grid-cols-5 gap-3 mb-6">
       <div class="border border-gray-300 p-2 rounded bg-white shadow-sm flex flex-col items-center">
         <p class="text-gray-500 text-[9px] font-bold mb-1">إجمالي العدد</p>
         <p class="text-lg font-black">{{ printData?.reportData?.length || 0 }}</p>
@@ -54,6 +54,10 @@
       <div class="border border-gray-300 p-2 rounded bg-white shadow-sm flex flex-col items-center">
         <p class="text-gray-500 text-[9px] font-bold mb-1">تدريب خارجي</p>
         <p class="text-lg font-black text-purple-700">{{ countStats.external }}</p>
+      </div>
+      <div class="border border-gray-300 p-2 rounded bg-white shadow-sm flex flex-col items-center">
+        <p class="text-gray-500 text-[9px] font-bold mb-1">المنسحبين</p>
+        <p class="text-lg font-black text-rose-700">{{ countStats.withdrawn }}</p>
       </div>
     </div>
 
@@ -77,7 +81,14 @@
           class="border-b border-gray-400 break-inside-avoid odd:bg-white even:bg-gray-50/50"
         >
           <td class="p-2 border border-gray-400 text-center font-bold">{{ index + 1 }}</td>
-          <td class="p-2 border border-gray-400 font-black text-xs">{{ item.Name }}</td>
+          <td class="p-2 border border-gray-400 font-black text-xs">
+            {{ item.Name }}
+            <span
+              v-if="item.is_withdrawn"
+              class="text-[9px] text-rose-600 bg-rose-50 px-1 rounded mr-1 font-bold"
+              >منسحب</span
+            >
+          </td>
           <td class="p-2 border border-gray-400 text-center font-mono">{{ item.NationalNo }}</td>
           <td class="p-2 border border-gray-400 text-center">{{ item.Qualification || '-' }}</td>
           <td class="p-2 border border-gray-400 text-center">{{ item.Residence || '-' }}</td>
@@ -143,6 +154,10 @@ const activeFiltersText = computed(() => {
   if (f.ShoeSize) parts.push(`رقم الحذاء: ${f.ShoeSize}`)
   if (f.IsFit !== undefined && f.IsFit !== '')
     parts.push(`الحالة: ${f.IsFit == 1 ? 'لائق' : 'غير لائق'}`)
+  if (f.is_withdrawn !== undefined && f.is_withdrawn !== '')
+    parts.push(
+      `الانضمام: ${f.is_withdrawn === 'true' || f.is_withdrawn === true ? 'منسحب' : 'منضم'}`,
+    )
   if (f.TrainingType) parts.push(`التدريب: ${f.TrainingType === 'external' ? 'خارجي' : 'داخلي'}`)
 
   return parts.length > 0 ? parts.join(' | ') : 'عرض كافة المتقدمين (بدون فلاتر)'
@@ -154,6 +169,7 @@ const countStats = computed(() => {
     fit: data.filter((i) => i.IsFit == 1).length,
     internal: data.filter((i) => i.TrainingType === 'internal').length,
     external: data.filter((i) => i.TrainingType === 'external').length,
+    withdrawn: data.filter((i) => i.is_withdrawn === true || i.is_withdrawn === 1).length,
   }
 })
 

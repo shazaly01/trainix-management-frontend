@@ -188,6 +188,25 @@
           (عرض فقط - لا تملك صلاحية التعديل)
         </span>
       </label>
+
+      <div
+        v-if="authStore.can('candidate.update_is_withdrawn')"
+        class="flex items-center gap-2 mt-4 md:mt-0"
+      >
+        <input
+          v-model="form.is_withdrawn"
+          type="checkbox"
+          id="is_withdrawn"
+          class="h-5 w-5 rounded border-surface-border text-primary focus:ring-primary cursor-pointer"
+        />
+        <label
+          for="is_withdrawn"
+          class="text-sm font-bold cursor-pointer select-none"
+          :class="form.is_withdrawn ? 'text-danger' : 'text-success'"
+        >
+          حالة الانضمام: {{ form.is_withdrawn ? 'منسحب' : 'منضم' }}
+        </label>
+      </div>
     </div>
 
     <AppTextarea
@@ -250,6 +269,7 @@ const form = ref({
   Size: '',
   ShoeSize: '',
   IsFit: false,
+  is_withdrawn: false,
   Notes: '',
   BankName: '', // 👈 أضف هذا
   BankAccountNo: '', // 👈 أضف هذا
@@ -298,6 +318,7 @@ const resetForm = () => {
     Size: '',
     ShoeSize: '',
     IsFit: false,
+    is_withdrawn: false,
     Notes: '',
     BankName: '',
     BankAccountNo: '',
@@ -332,6 +353,7 @@ const handleSubmit = () => {
   formData.append('Qualification', form.value.Qualification || '')
   formData.append('Notes', form.value.Notes || '')
   formData.append('IsFit', form.value.IsFit ? '1' : '0')
+  formData.append('is_withdrawn', form.value.is_withdrawn ? '1' : '0')
   formData.append('BankName', form.value.BankName || '')
   formData.append('BankAccountNo', form.value.BankAccountNo || '')
   // إضافة الحقول الجديدة والاختيارية
@@ -366,6 +388,7 @@ watch(
         Size: newData.Size || '',
         ShoeSize: newData.ShoeSize || '',
         IsFit: newData.IsFit ?? true,
+        is_withdrawn: newData.is_withdrawn ?? false,
         Notes: newData.Notes || '',
         BankName: newData.BankName || '', // 👈 جلب البيانات عند التعديل
         BankAccountNo: newData.BankAccountNo || '', // 👈 جلب البيانات عند التعديل
