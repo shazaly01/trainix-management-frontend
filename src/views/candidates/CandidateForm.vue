@@ -165,64 +165,88 @@
       />
     </div>
 
-    <div v-if="authStore.can('candidate.view_isfit')" class="flex items-center gap-2">
-      <input
-        v-model="form.IsFit"
-        type="checkbox"
-        id="is_fit"
-        :disabled="!authStore.can('candidate.update_isfit')"
-        class="h-5 w-5 rounded border-surface-border text-primary focus:ring-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-      />
-      <label
-        for="is_fit"
-        class="text-sm font-bold cursor-pointer select-none"
-        :class="[
-          form.IsFit ? 'text-success' : 'text-danger',
-          !authStore.can('candidate.update_isfit') ? 'opacity-70 cursor-not-allowed' : '',
-        ]"
-      >
-        حالة المترشح: {{ form.IsFit ? 'لائق طبياً' : 'غير لائق' }}
-        <span
-          v-if="!authStore.can('candidate.update_isfit')"
-          class="text-[10px] block font-normal text-text-muted"
+    <!-- قسم الحالات (لياقة، انضمام، تواجد) -->
+    <div
+      class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-surface-ground/50 p-4 rounded-xl border border-surface-border/50"
+    >
+      <!-- حالة اللياقة -->
+      <div v-if="authStore.can('candidate.view_isfit')" class="flex items-center gap-2">
+        <input
+          v-model="form.IsFit"
+          type="checkbox"
+          id="is_fit"
+          :disabled="!authStore.can('candidate.update_isfit')"
+          class="h-5 w-5 rounded border-surface-border text-primary focus:ring-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        />
+        <label
+          for="is_fit"
+          class="text-sm font-bold cursor-pointer select-none"
+          :class="[
+            form.IsFit ? 'text-success' : 'text-danger',
+            !authStore.can('candidate.update_isfit') ? 'opacity-70 cursor-not-allowed' : '',
+          ]"
         >
-          (عرض فقط - لا تملك صلاحية التعديل)
-        </span>
-      </label>
+          حالة المترشح: {{ form.IsFit ? 'لائق طبياً' : 'غير لائق' }}
+          <span
+            v-if="!authStore.can('candidate.update_isfit')"
+            class="text-[10px] block font-normal text-text-muted"
+          >
+            (عرض فقط)
+          </span>
+        </label>
+      </div>
 
-      <div
-        v-if="authStore.can('candidate.update_is_withdrawn')"
-        class="flex items-center gap-2 mt-4 md:mt-0"
-      >
+      <!-- حالة الانضمام (الانسحاب) -->
+      <div v-if="authStore.can('candidate.view_is_withdrawn')" class="flex items-center gap-2">
         <input
           v-model="form.is_withdrawn"
           type="checkbox"
           id="is_withdrawn"
-          class="h-5 w-5 rounded border-surface-border text-primary focus:ring-primary cursor-pointer"
+          :disabled="!authStore.can('candidate.update_is_withdrawn')"
+          class="h-5 w-5 rounded border-surface-border text-primary focus:ring-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         />
         <label
           for="is_withdrawn"
           class="text-sm font-bold cursor-pointer select-none"
-          :class="form.is_withdrawn ? 'text-danger' : 'text-success'"
+          :class="[
+            form.is_withdrawn ? 'text-danger' : 'text-success',
+            !authStore.can('candidate.update_is_withdrawn') ? 'opacity-70 cursor-not-allowed' : '',
+          ]"
         >
           حالة الانضمام: {{ form.is_withdrawn ? 'منسحب' : 'منضم' }}
+          <span
+            v-if="!authStore.can('candidate.update_is_withdrawn')"
+            class="text-[10px] block font-normal text-text-muted"
+          >
+            (عرض فقط)
+          </span>
         </label>
       </div>
 
       <!-- حالة الغياب والحضور -->
-      <div class="flex items-center gap-2 mt-4 md:mt-0">
+      <div v-if="authStore.can('candidate.view_is_absent')" class="flex items-center gap-2">
         <input
           v-model="form.is_absent"
           type="checkbox"
           id="is_absent"
-          class="h-5 w-5 rounded border-surface-border text-primary focus:ring-primary cursor-pointer"
+          :disabled="!authStore.can('candidate.update_is_absent')"
+          class="h-5 w-5 rounded border-surface-border text-primary focus:ring-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         />
         <label
           for="is_absent"
           class="text-sm font-bold cursor-pointer select-none"
-          :class="form.is_absent ? 'text-danger' : 'text-success'"
+          :class="[
+            form.is_absent ? 'text-danger' : 'text-success',
+            !authStore.can('candidate.update_is_absent') ? 'opacity-70 cursor-not-allowed' : '',
+          ]"
         >
           التواجد: {{ form.is_absent ? 'متغيب' : 'حاضر' }}
+          <span
+            v-if="!authStore.can('candidate.update_is_absent')"
+            class="text-[10px] block font-normal text-text-muted"
+          >
+            (عرض فقط)
+          </span>
         </label>
       </div>
     </div>

@@ -19,7 +19,7 @@
     </div>
 
     <div class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-5">
         <AppInput
           v-model="filters.search"
           id="search"
@@ -44,6 +44,21 @@
           type="number"
           label="رقم الحذاء"
           placeholder="مثال: 42"
+        />
+
+        <AppInput
+          v-model="filters.birth_year_from"
+          id="filter_birth_year_from"
+          type="number"
+          label="مواليد من سنة"
+          placeholder="مثال: 1990"
+        />
+        <AppInput
+          v-model="filters.birth_year_to"
+          id="filter_birth_year_to"
+          type="number"
+          label="مواليد إلى سنة"
+          placeholder="مثال: 2005"
         />
       </div>
 
@@ -169,6 +184,8 @@ const filters = ref({
   is_absent: '',
   TrainingType: '',
   Qualification: '',
+  birth_year_from: '',
+  birth_year_to: '',
 })
 
 let debounceTimeout = null
@@ -184,6 +201,8 @@ const emitFilters = () => {
   if (filters.value.is_absent !== '') activeFilters.is_absent = filters.value.is_absent
   if (filters.value.TrainingType) activeFilters.TrainingType = filters.value.TrainingType
   if (filters.value.Qualification) activeFilters.Qualification = filters.value.Qualification
+  if (filters.value.birth_year_from) activeFilters.birth_year_from = filters.value.birth_year_from
+  if (filters.value.birth_year_to) activeFilters.birth_year_to = filters.value.birth_year_to
 
   emit('filter', activeFilters)
 }
@@ -210,6 +229,8 @@ const resetFilters = () => {
     is_absent: '',
     TrainingType: '',
     Qualification: '',
+    birth_year_from: '',
+    birth_year_to: '',
   }
 }
 </script>

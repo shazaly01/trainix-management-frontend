@@ -168,6 +168,13 @@ const activeFiltersText = computed(() => {
     parts.push(`التواجد: ${f.is_absent === 'true' || f.is_absent === true ? 'متغيب' : 'حاضر'}`)
   if (f.TrainingType) parts.push(`التدريب: ${f.TrainingType === 'external' ? 'خارجي' : 'داخلي'}`)
 
+  if (f.birth_year_from && f.birth_year_to) {
+    parts.push(`المواليد: من ${f.birth_year_from} إلى ${f.birth_year_to}`)
+  } else if (f.birth_year_from) {
+    parts.push(`المواليد: من سنة ${f.birth_year_from} فما فوق`)
+  } else if (f.birth_year_to) {
+    parts.push(`المواليد: حتى سنة ${f.birth_year_to}`)
+  }
   return parts.length > 0 ? parts.join(' | ') : 'عرض كافة المتقدمين (بدون فلاتر)'
 })
 
