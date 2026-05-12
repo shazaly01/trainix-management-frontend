@@ -172,19 +172,31 @@
           </div>
         </div>
       </template>
-
       <template #cell-StatusTypeSize="{ item }">
         <div class="flex flex-col gap-2">
-          <span
-            class="px-2.5 py-0.5 text-[10px] font-black rounded-lg border w-fit uppercase"
-            :class="
-              item.IsFit
-                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
-            "
-          >
-            {{ item.IsFit ? 'لائق طبياً' : 'غير لائق' }}
-          </span>
+          <!-- صف يحتوي على حالة اللياقة وحالة التواجد معاً -->
+          <div class="flex items-center gap-2">
+            <span
+              class="px-2.5 py-0.5 text-[10px] font-black rounded-lg border w-fit uppercase"
+              :class="
+                item.IsFit
+                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                  : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+              "
+            >
+              {{ item.IsFit ? 'لائق طبياً' : 'غير لائق' }}
+            </span>
+            <span
+              class="px-2.5 py-0.5 text-[10px] font-black rounded-lg border w-fit uppercase"
+              :class="
+                item.is_absent
+                  ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                  : 'bg-teal-500/10 text-teal-400 border-teal-500/20'
+              "
+            >
+              {{ item.is_absent ? 'متغيب' : 'حاضر' }}
+            </span>
+          </div>
           <span
             class="px-2.5 py-0.5 text-[10px] font-black rounded-lg border w-fit uppercase"
             :class="

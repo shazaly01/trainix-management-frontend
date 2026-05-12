@@ -1,3 +1,4 @@
+<!--src\views\candidates\CandidatesReportView.vue-->
 <template>
   <div class="print-portrait-container bg-white text-black p-6 font-sans" dir="rtl">
     <div
@@ -59,6 +60,10 @@
         <p class="text-gray-500 text-[9px] font-bold mb-1">المنسحبين</p>
         <p class="text-lg font-black text-rose-700">{{ countStats.withdrawn }}</p>
       </div>
+      <div class="border border-gray-300 p-2 rounded bg-white shadow-sm flex flex-col items-center">
+        <p class="text-gray-500 text-[9px] font-bold mb-1">المتغيبين</p>
+        <p class="text-lg font-black text-amber-700">{{ countStats.absent }}</p>
+      </div>
     </div>
 
     <table class="w-full text-right border-collapse border-2 border-black shadow-sm">
@@ -100,6 +105,7 @@
               item.IsFit ? 'لائق' : 'غير لائق'
             }}</span>
           </td>
+
           <td class="p-2 border border-gray-400 text-center">
             {{ item.TrainingType === 'external' ? 'خارجي' : 'داخلي' }}
           </td>
@@ -158,6 +164,8 @@ const activeFiltersText = computed(() => {
     parts.push(
       `الانضمام: ${f.is_withdrawn === 'true' || f.is_withdrawn === true ? 'منسحب' : 'منضم'}`,
     )
+  if (f.is_absent !== undefined && f.is_absent !== '')
+    parts.push(`التواجد: ${f.is_absent === 'true' || f.is_absent === true ? 'متغيب' : 'حاضر'}`)
   if (f.TrainingType) parts.push(`التدريب: ${f.TrainingType === 'external' ? 'خارجي' : 'داخلي'}`)
 
   return parts.length > 0 ? parts.join(' | ') : 'عرض كافة المتقدمين (بدون فلاتر)'
@@ -170,6 +178,7 @@ const countStats = computed(() => {
     internal: data.filter((i) => i.TrainingType === 'internal').length,
     external: data.filter((i) => i.TrainingType === 'external').length,
     withdrawn: data.filter((i) => i.is_withdrawn === true || i.is_withdrawn === 1).length,
+    absent: data.filter((i) => i.is_absent === true || i.is_absent === 1).length,
   }
 })
 

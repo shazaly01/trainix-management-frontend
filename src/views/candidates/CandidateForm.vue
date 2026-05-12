@@ -1,3 +1,4 @@
+<!---src\views\candidates\CandidateForm.vue--->
 <template>
   <form @submit.prevent="handleSubmit" class="space-y-6">
     <div
@@ -207,6 +208,23 @@
           حالة الانضمام: {{ form.is_withdrawn ? 'منسحب' : 'منضم' }}
         </label>
       </div>
+
+      <!-- حالة الغياب والحضور -->
+      <div class="flex items-center gap-2 mt-4 md:mt-0">
+        <input
+          v-model="form.is_absent"
+          type="checkbox"
+          id="is_absent"
+          class="h-5 w-5 rounded border-surface-border text-primary focus:ring-primary cursor-pointer"
+        />
+        <label
+          for="is_absent"
+          class="text-sm font-bold cursor-pointer select-none"
+          :class="form.is_absent ? 'text-danger' : 'text-success'"
+        >
+          التواجد: {{ form.is_absent ? 'متغيب' : 'حاضر' }}
+        </label>
+      </div>
     </div>
 
     <AppTextarea
@@ -270,6 +288,7 @@ const form = ref({
   ShoeSize: '',
   IsFit: false,
   is_withdrawn: false,
+  is_absent: false,
   Notes: '',
   BankName: '', // 👈 أضف هذا
   BankAccountNo: '', // 👈 أضف هذا
@@ -319,6 +338,7 @@ const resetForm = () => {
     ShoeSize: '',
     IsFit: false,
     is_withdrawn: false,
+    is_absent: false,
     Notes: '',
     BankName: '',
     BankAccountNo: '',
@@ -354,6 +374,7 @@ const handleSubmit = () => {
   formData.append('Notes', form.value.Notes || '')
   formData.append('IsFit', form.value.IsFit ? '1' : '0')
   formData.append('is_withdrawn', form.value.is_withdrawn ? '1' : '0')
+  formData.append('is_absent', form.value.is_absent ? '1' : '0')
   formData.append('BankName', form.value.BankName || '')
   formData.append('BankAccountNo', form.value.BankAccountNo || '')
   // إضافة الحقول الجديدة والاختيارية
@@ -389,6 +410,7 @@ watch(
         ShoeSize: newData.ShoeSize || '',
         IsFit: newData.IsFit ?? true,
         is_withdrawn: newData.is_withdrawn ?? false,
+        is_absent: newData.is_absent ?? false,
         Notes: newData.Notes || '',
         BankName: newData.BankName || '', // 👈 جلب البيانات عند التعديل
         BankAccountNo: newData.BankAccountNo || '', // 👈 جلب البيانات عند التعديل
